@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mayday · 给你的银河诗篇</title>
+    <title>Mayday · 银河自传</title>
     <style>
         :root { 
             --accent: #ffffff; 
-            --glow-color: rgba(255, 255, 255, 0.6); 
+            --glow: rgba(255, 255, 255, 0.4); 
         }
         
         html, body { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             background-color: #000; 
             font-family: "Optima", "PingFang SC", "Avenir Next", sans-serif; 
-            color: white; 
-            user-select: none;
+            color: white; user-select: none;
             touch-action: manipulation;
         }
 
@@ -24,78 +23,70 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 2000; display: flex;
             flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
         }
-        #cover p { letter-spacing: 12px; font-weight: 200; opacity: 0.9; font-size: 1.4rem; }
-        #cover span { font-size: 10px; margin-top: 25px; opacity: 0.3; letter-spacing: 3px; border: 1px solid #fff; padding: 6px 18px; border-radius: 30px; }
+        #cover p { letter-spacing: 12px; font-weight: 200; opacity: 0.9; font-size: 1.3rem; margin: 0; }
+        #cover span { font-size: 10px; margin-top: 25px; opacity: 0.3; letter-spacing: 3px; border: 1px solid #fff; padding: 6px 16px; border-radius: 25px; }
 
-        /* 歌词区 - 极致排版与光晕 */
+        /* 歌词区 - 深度氛围感与智能排版 */
         #lyrics-container {
             position: fixed; 
             top: 42%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%; 
-            min-height: 200px; /* 固定高度防止抖动 */
-            display: flex; align-items: center; justify-content: center;
+            width: 90%; text-align: center;
             z-index: 100; pointer-events: none;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         #lyrics-text {
-            font-size: 1.85rem; 
-            font-weight: 300; 
-            letter-spacing: 5px; 
-            line-height: 1.7;
+            font-size: 1.8rem; font-weight: 300; letter-spacing: 5px; line-height: 1.7;
             color: var(--accent);
-            text-align: center;
-            /* 核心排版：平衡换行 */
+            /* 关键：防止孤字换行，平衡视觉 */
             text-wrap: balance; 
-            white-space: pre-wrap;
-            /* 深度多层光晕 */
+            max-width: 100%;
+            /* 深度光晕叠加 */
             text-shadow: 
-                0 0 8px var(--glow-color),
-                0 0 15px var(--glow-color),
-                0 0 30px var(--glow-color),
-                0 0 50px var(--glow-color);
-            
-            will-change: opacity, filter, transform;
+                0 0 10px var(--glow),
+                0 0 20px var(--glow),
+                0 0 40px var(--glow);
+            will-change: opacity, transform, filter;
             transition: 
                 opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
                 transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
                 filter 1s ease;
+            margin: 0;
         }
 
-        /* 慢节奏消散动画 */
-        .lyric-hidden { 
+        /* 消散动效 */
+        .lyric-state-change { 
             opacity: 0 !important; 
             transform: scale(0.92) translateY(15px) !important; 
-            filter: blur(20px) brightness(1.5) !important;
+            filter: blur(20px) brightness(1.5) !important; 
         }
 
-        /* 底部导航 - iPhone 12 安全区适配 */
+        /* 底部导航 - iPhone 安全区域适配 */
         #song-menu {
             position: fixed; 
-            bottom: calc(65px + env(safe-area-inset-bottom)); 
+            bottom: calc(60px + env(safe-area-inset-bottom)); 
             left: 0; width: 100%; 
             display: flex; justify-content: center; align-items: center;
             gap: 12px; flex-wrap: wrap; z-index: 1000;
-            padding: 0 25px; box-sizing: border-box;
+            padding: 0 20px; box-sizing: border-box;
         }
 
         .song-btn {
-            background: rgba(255,255,255,0.04); 
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 10px 16px; border-radius: 25px; cursor: pointer;
-            font-size: 0.8rem; 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            color: rgba(255,255,255,0.4); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 18px; border-radius: 25px; cursor: pointer;
+            font-size: 0.8rem; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255,255,255,0.4); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             -webkit-tap-highlight-color: transparent;
-            letter-spacing: 1px;
+            letter-spacing: 1px; white-space: nowrap;
         }
 
         .song-btn.active { 
             border-color: var(--accent); color: white; 
-            box-shadow: 0 0 15px var(--glow-color);
+            box-shadow: 0 0 15px var(--glow);
             background: rgba(255,255,255,0.12);
             transform: translateY(-3px);
         }
@@ -105,20 +96,20 @@
             left: 0; width: 100%; text-align: center;
             font-size: 9px; opacity: 0.2; letter-spacing: 2px;
         }
-        canvas { display: block; }
+        canvas { display: block; touch-action: none; }
     </style>
 </head>
 <body>
 
     <div id="cover" onclick="startApp()">
         <p>如果五月天懂你</p>
-        <span>点击开启银河旅程</span>
+        <span>开启银河旅程</span>
     </div>
 
     <div id="footer-note">致：那个喜欢五月天的你</div>
 
     <div id="lyrics-container">
-        <div id="lyrics-text">在那座 倔强的 城市里</div>
+        <div id="lyrics-text">每一个 渺小的 理由 都能成为 顽固的 借口</div>
     </div>
 
     <div id="song-menu"></div>
@@ -130,37 +121,38 @@
     <script type="module">
         import * as THREE from 'three';
 
+        // --- 核心配置：集成您喜欢的 7 种专属律动 ---
         const config = {
-            "顽固": { color: "#FFD700", mode: "pulse", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
-            "人生海海": { color: "#4EA1FF", mode: "wave", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "明天我依然装作 快乐且洒脱", "那是我的骄傲 太阳在等我"] },
-            "笑忘歌": { color: "#FFB6C1", mode: "float", lyrics: ["这一生志愿只要平凡快乐", "谁说这样不伟大呢", "手牵手 一起唱 永远都记得", "天真的笑脸 依旧在开放"] },
+            "顽固": { color: "#FFD700", mode: "heartbeat", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
+            "人生海海": { color: "#4EA1FF", mode: "ocean", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "明天我依然装作 快乐且洒脱", "那是我的骄傲 太阳在等我"] },
+            "笑忘歌": { color: "#FFB6C1", mode: "balloons", lyrics: ["这一生志愿只要平凡快乐", "谁说这样不伟大呢", "手牵手 一起唱 永远都记得", "天真的笑脸 依旧在开放"] },
             "一颗苹果": { color: "#FF4500", mode: "vortex", lyrics: ["时间如果我们不珍惜 就会走得很快", "活着其实很好 再吃一颗苹果", "总要有一首我的歌 哪怕没人合", "大概是 只要我现在 觉得快乐"] },
-            "爱情的模样": { color: "#B19CD9", mode: "expand", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是爱情的模样 晴天或阴天", "在你的身上 找到我遗失的翅膀"] },
+            "爱情的模样": { color: "#B19CD9", mode: "nebula", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是爱情的模样 晴天或阴天", "在你的身上 找到我遗失的翅膀"] },
             "垃圾车": { color: "#F0E68C", mode: "jump", lyrics: ["有你 我才没那么孤单", "你是我的垃圾车 每天为你唱歌", "虽然你偶尔会 乱发脾气", "但你是我 永远的好兄弟"] },
-            "勇敢": { color: "#20B2AA", mode: "dash", lyrics: ["风若吹 乱我的头发 也不惊惶", "我知道 终会有一个未来", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
+            "勇敢": { color: "#20B2AA", mode: "warp", lyrics: ["风若吹 乱我的头发 也不惊惶", "我知道 终会有一个未来", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
         };
 
         let currentSong = "顽固";
         let currentIndices = {};
         Object.keys(config).forEach(k => currentIndices[k] = 0);
 
-        // --- 创建显著的发光粒子贴图 ---
-        function createBrightStarTexture() {
+        // --- 解决方块感：创建柔和圆形发光贴图 ---
+        function createCircleTexture() {
             const canvas = document.createElement('canvas');
-            canvas.width = 128; canvas.height = 128;
+            canvas.width = 64; canvas.height = 64;
             const ctx = canvas.getContext('2d');
-            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
             gradient.addColorStop(0, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.1, 'rgba(255,255,255,0.9)');
-            gradient.addColorStop(0.4, 'rgba(255,255,255,0.2)');
+            gradient.addColorStop(0.2, 'rgba(255,255,255,0.8)');
+            gradient.addColorStop(0.5, 'rgba(255,255,255,0.1)');
             gradient.addColorStop(1, 'rgba(255,255,255,0)');
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 128, 128);
+            ctx.fillRect(0, 0, 64, 64);
             return new THREE.CanvasTexture(canvas);
         }
 
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2500);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
         camera.position.z = 1000;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -168,12 +160,12 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        // 增加随机大小以增强层次感
-        const particleCount = 4500;
+        // 粒子系统
+        const particleCount = 5000;
         const geo = new THREE.BufferGeometry();
         const posArray = new Float32Array(particleCount * 3);
-        const sizes = new Float32Array(particleCount);
         const basePos = new Float32Array(particleCount * 3);
+        const sizes = new Float32Array(particleCount);
 
         for(let i=0; i<particleCount; i++) {
             const i3 = i * 3;
@@ -183,30 +175,29 @@
             basePos[i3] = posArray[i3];
             basePos[i3+1] = posArray[i3+1];
             basePos[i3+2] = posArray[i3+2];
-            // 随机大小：让一部分星星更大更显眼
-            sizes[i] = Math.random() < 0.1 ? 15.0 : 7.0;
+            sizes[i] = Math.random() < 0.1 ? 12.0 : 6.0; // 层次感随机大小
         }
         geo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
         const mat = new THREE.PointsMaterial({
-            size: 10,
-            map: createBrightStarTexture(),
-            transparent: true, opacity: 0.9,
+            size: 8,
+            map: createCircleTexture(),
+            transparent: true, opacity: 0.8,
             blending: THREE.AdditiveBlending,
             depthWrite: false,
-            sizeAttenuation: true
         });
 
         const particles = new THREE.Points(geo, mat);
         scene.add(particles);
 
+        let targetZoom = 1000;
+
         window.startApp = () => {
             document.getElementById('cover').style.opacity = '0';
-            setTimeout(() => { document.getElementById('cover').style.display = 'none'; }, 2000);
+            setTimeout(() => { document.getElementById('cover').style.display = 'none'; }, 1500);
         };
 
-        // --- 优化的歌词慢节奏切换 ---
+        // --- 优雅慢节奏切换逻辑 ---
         function changeTheme(name, event) {
             currentSong = name;
             const data = config[name];
@@ -220,22 +211,21 @@
             }
 
             const el = document.getElementById('lyrics-text');
-            // 1. 开始消散
-            el.classList.add('lyric-hidden');
+            // 1. 消散
+            el.classList.add('lyric-state-change');
             
-            // 2. 600ms 后更换文字 (处于全透明模糊状态)
+            // 2. 600ms 后更换文字（文字最模糊时）
             setTimeout(() => {
                 const idx = currentIndices[name];
                 el.innerText = data.lyrics[idx];
                 currentIndices[name] = (idx + 1) % data.lyrics.length;
                 
-                // 色彩动态适配
                 const color = data.color;
                 document.documentElement.style.setProperty('--accent', color);
-                document.documentElement.style.setProperty('--glow-color', color + "99");
+                document.documentElement.style.setProperty('--glow', color + "99");
                 
-                // 3. 开始浮现
-                el.classList.remove('lyric-hidden');
+                // 3. 浮现
+                el.classList.remove('lyric-state-change');
                 mat.color.set(color);
             }, 600); 
         }
@@ -249,6 +239,11 @@
             menu.appendChild(btn);
         });
 
+        window.addEventListener('wheel', (e) => {
+            targetZoom = THREE.MathUtils.clamp(targetZoom + e.deltaY * 0.5, 400, 1800);
+        });
+
+        // --- 核心动画逻辑：集成 7 种物理模式 ---
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
@@ -257,28 +252,43 @@
 
             for(let i=0; i<particleCount; i++) {
                 const i3 = i * 3;
-                if(mode === "wave") { 
-                    pos[i3+1] = basePos[i3+1] + Math.sin(time + basePos[i3]*0.01) * 50;
-                } else if(mode === "pulse") { 
-                    const s = 1 + Math.sin(time * 2.5) * 0.1;
-                    pos[i3] = basePos[i3] * s; pos[i3+1] = basePos[i3+1] * s;
-                } else if(mode === "float") { 
-                    pos[i3+1] += 1.2; if(pos[i3+1] > 1000) pos[i3+1] = -1000;
-                } else if(mode === "vortex") { 
-                    const x = pos[i3], z = pos[i3+2];
-                    const angle = 0.012;
-                    pos[i3] = x * Math.cos(angle) - z * Math.sin(angle);
-                    pos[i3+2] = x * Math.sin(angle) + z * Math.cos(angle);
-                } else if(mode === "jump") { 
-                    pos[i3+1] = basePos[i3+1] + Math.abs(Math.sin(time*4 + i)) * 30;
-                } else if(mode === "dash") { 
-                    pos[i3] += 20; if(pos[i3] > 1000) pos[i3] = -1000;
-                } else { 
-                    pos[i3] = basePos[i3] + Math.sin(time + i) * 15;
-                    pos[i3+1] = basePos[i3+1] + Math.cos(time + i) * 15;
+                const ox = basePos[i3], oy = basePos[i3+1], oz = basePos[i3+2];
+
+                switch(mode) {
+                    case "heartbeat": // 顽固：脉动
+                        const s = 1 + Math.sin(time * 3) * 0.1;
+                        pos[i3] = ox * s; pos[i3+1] = oy * s; pos[i3+2] = oz * s;
+                        break;
+                    case "ocean": // 人生海海：3D海浪
+                        pos[i3+1] = oy + Math.sin(time + ox * 0.01) * 45;
+                        pos[i3+2] = oz + Math.cos(time + oy * 0.01) * 45;
+                        break;
+                    case "balloons": // 笑忘歌：漂浮
+                        pos[i3+1] += 1.2;
+                        pos[i3] = ox + Math.sin(time + oy * 0.01) * 20;
+                        if(pos[i3+1] > 1000) pos[i3+1] = -1000;
+                        break;
+                    case "vortex": // 一颗苹果：漩涡
+                        const vx = pos[i3], vz = pos[i3+2];
+                        const angle = 0.015;
+                        pos[i3] = vx * Math.cos(angle) - vz * Math.sin(angle);
+                        pos[i3+2] = vx * Math.sin(angle) + vz * Math.cos(angle);
+                        break;
+                    case "nebula": // 爱情的模样：呼吸星云
+                        pos[i3] = ox + Math.sin(time * 0.5 + i) * 15;
+                        pos[i3+1] = oy + Math.cos(time * 0.5 + i) * 15;
+                        break;
+                    case "jump": // 垃圾车：同步跳
+                        pos[i3+1] = oy + Math.abs(Math.sin(time * 4 + (ox/500))) * 40;
+                        break;
+                    case "warp": // 勇敢：穿梭飞驰
+                        pos[i3+2] += 20;
+                        if(pos[i3+2] > 1000) pos[i3+2] = -1500;
+                        break;
                 }
             }
             particles.geometry.attributes.position.needsUpdate = true;
+            camera.position.z += (targetZoom - camera.position.z) * 0.05;
             camera.lookAt(0,0,0);
             renderer.render(scene, camera);
         }
