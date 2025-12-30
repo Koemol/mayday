@@ -3,88 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mayday · 给你的银河诗篇</title>
+    <title>Mayday · 寄往银河的诗</title>
     <style>
-        :root {
-            --theme-color: #4EA1FF;
-            --glow-opacity: rgba(78, 161, 255, 0.5);
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #000;
-            font-family: "PingFang SC", "STHeiti", "Microsoft YaHei", sans-serif;
-            color: #ffffff;
+        :root { --accent: #ffffff; }
+        body { 
+            margin: 0; padding: 0; overflow: hidden; 
+            background-color: #000; 
+            font-family: "Optima", "PingFang SC", "STHeiti", "Microsoft YaHei", sans-serif; 
+            color: white; 
             user-select: none;
         }
 
-        /* 情感封面 */
-        #entry-cover {
+        /* 入场封面 */
+        #cover {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
-            z-index: 2000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: radial-gradient(circle at center, #111 0%, #000 100%); 
+            z-index: 2000; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 2s ease; cursor: pointer;
         }
-        #entry-cover.fade-out { opacity: 0; pointer-events: none; transform: scale(1.1); }
-        
-        .quote-main { font-size: 1.4rem; letter-spacing: 12px; font-weight: 200; margin-bottom: 30px; opacity: 0.9; }
-        .quote-sub { font-size: 0.7rem; letter-spacing: 4px; opacity: 0.4; border: 1px solid #fff; padding: 6px 20px; border-radius: 30px; cursor: pointer; transition: 0.3s; }
-        .quote-sub:hover { background: #fff; color: #000; opacity: 1; }
+        #cover p { letter-spacing: 12px; font-weight: 200; opacity: 0.8; font-size: 1.4rem; }
+        #cover span { font-size: 11px; margin-top: 25px; opacity: 0.4; letter-spacing: 3px; border: 1px solid #fff; padding: 5px 15px; border-radius: 20px; }
 
-        /* 歌词舞台 */
-        #lyrics-stage {
-            position: absolute; top: 46%; left: 50%;
-            transform: translate(-50%, -50%);
+        /* 歌词区 - 采用你要求的字体效果 */
+        #lyrics-container {
+            position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);
             width: 85%; text-align: center; z-index: 100; pointer-events: none;
         }
-
         #lyrics-text {
-            font-size: 2rem; font-weight: 300; letter-spacing: 6px; line-height: 1.8;
+            font-size: 2.2rem; font-weight: 300; letter-spacing: 8px; line-height: 1.8;
             transition: all 1.2s cubic-bezier(0.2, 0, 0.2, 1);
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+            color: var(--accent);
         }
-   .lyric-state-change { opacity: 0; transform: scale(0.95) translateY(10px); filter: blur(15px); }
+        /* 消散过渡效果 */
+        .lyric-state-change { 
+            opacity: 0; 
+            transform: scale(0.95) translateY(15px); 
+            filter: blur(15px) !important; 
+        }
 
-        /* 底部菜单 */
+        /* 底部菜单 - 优化后的UI */
         #song-menu {
             position: absolute; bottom: 50px; width: 100%;
             display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; z-index: 1000;
         }
         .song-btn {
-            background: transparent; border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 7px 18px; border-radius: 30px; cursor: pointer;
-            font-size: 0.8rem; transition: all 0.5s; letter-spacing: 2px;
-            color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 20px; border-radius: 30px; cursor: pointer;
+            font-size: 0.85rem; transition: all 0.5s; letter-spacing: 2px;
+            color: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
         }
-        .song-btn:hover { border-color: white; color: white; background: rgba(255,255,255,0.1); }
-        .song-btn.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        .song-btn:hover { border-color: white; color: white; background: rgba(255,255,255,0.15); transform: translateY(-3px); }
+        .song-btn.active { 
+            border-color: var(--accent); 
+            color: var(--accent); 
+            box-shadow: 0 0 20px var(--accent);
+            background: rgba(255,255,255,0.1);
+        }
 
-        /* 装饰元素 */
         #footer-note {
             position: absolute; bottom: 20px; left: 30px; font-size: 10px; 
             opacity: 0.3; letter-spacing: 2px; z-index: 100;
         }
-        canvas { display: block; filter: contrast(1.1); }
+        #scroll-hint {
+            position: absolute; top: 30px; width: 100%; text-align: center;
+            font-size: 9px; opacity: 0.2; letter-spacing: 5px;
+        }
+        canvas { display: block; }
     </style>
 </head>
 <body>
 
-    <div id="entry-cover">
-        <div class="quote-main">加入五月天，永远不会太迟</div>
-        <div class="quote-sub" onclick="launchGalaxy()">开启这份回忆</div>
+    <div id="cover" onclick="startApp()">
+        <p>如果五月天懂你</p>
+        <span>点击开启银河之旅</span>
     </div>
 
-    <div id="scroll-hint">SCROLL TO TRAVEL THROUGH THE UNIVERSE</div>
-    <div class="corner-mark">FOR MY BEST FRIEND · MAYDAY FOREVER</div>
+    <div id="scroll-hint">SCROLL TO FLY THROUGH THE STARS</div>
+    <div id="footer-note">FOR MY BEST FRIEND · MAYDAY FOREVER</div>
 
-    <div id="lyrics-stage">
-        <div id="lyrics-text">每一个 渺小的 理由 都能成为 顽固的 借口</div>
+    <div id="lyrics-container">
+        <div id="lyrics-text">在那座 倔强的 城市里</div>
     </div>
 
-    <div id="nav-menu"></div>
+    <div id="song-menu"></div>
 
     <script type="importmap">
         { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -93,151 +96,160 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- 核心情感配置 ---
         const config = {
-            "顽固": { color: "#FFCE00", mode: "heartbeat", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "一次次被遗弃 终究会再想起", "你是不迟疑的箭 逆着风飞去"] },
-            "人生海海": { color: "#4EA1FF", mode: "ocean", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "那是我的骄傲 太阳在等我", "明天我依然装作 快乐且洒脱"] },
-            "笑忘歌": { color: "#FF99AA", mode: "breeze", lyrics: ["这一生只愿只要平凡快乐", "谁说这样不伟大呢", "手牵手 一起唱 永远都记得", "天真的笑脸 依旧在开放"] },
-            "一颗苹果": { color: "#FF5533", mode: "swirl", lyrics: ["时间如果我们不珍惜 就会走得很快", "活着其实很好 再吃一颗苹果", "总要有一首我的歌 哪怕没人合", "大概是 只要我现在 觉得快乐"] },
-            "爱情的模样": { color: "#BB88FF", mode: "dream", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是爱情的模样 晴天或阴天", "找到我遗失的翅膀"] },
-            "垃圾车": { color: "#EEDD88", mode: "bounce", lyrics: ["有你 我才没那么孤单", "你是我的垃圾车 每天为你唱歌", "虽然你偶尔会 乱发脾气", "但你是我 永远的好兄弟"] },
-            "勇敢": { color: "#00EEDD", mode: "dash", lyrics: ["风若吹 乱我的头发 也不惊惶", "我知道 终会有一个未来", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
+            "顽固": { color: "#FFD700", mode: "pulse", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
+            "人生海海": { color: "#4EA1FF", mode: "wave", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "那是我的骄傲 太阳在等我", "明天我依然装作 快乐且洒脱"] },
+            "笑忘歌": { color: "#FFB6C1", mode: "float", lyrics: ["这一生志愿只要平凡快乐", "谁说这样不伟大呢", "手牵手 一起唱 永远都记得", "天真的笑脸 依旧在开放"] },
+            "一颗苹果": { color: "#FF4500", mode: "vortex", lyrics: ["时间如果我们不珍惜 就会走得很快", "活着其实很好 再吃一颗苹果", "总要有一首我的歌 哪怕没人合", "大概是 只要我现在 觉得快乐"] },
+            "爱情的模样": { color: "#B19CD9", mode: "expand", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是爱情的模样 晴天或阴天", "在你的身上 找到我遗失的翅膀"] },
+            "垃圾车": { color: "#F0E68C", mode: "jump", lyrics: ["有你 我才没那么孤单", "你是我的垃圾车 每天为你唱歌", "虽然你偶尔会 乱发脾气", "但你是我 永远的好兄弟"] },
+            "勇敢": { color: "#20B2AA", mode: "dash", lyrics: ["风若吹 乱我的头发 也不惊惶", "我知道 终会有一个未来", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
         };
 
         let currentSong = "顽固";
-        let songIndices = {};
-        Object.keys(config).forEach(k => songIndices[k] = 0);
+        let currentIndices = {};
+        Object.keys(config).forEach(k => currentIndices[k] = 0);
 
         // --- Three.js 初始化 ---
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 3000);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2500);
         camera.position.z = 1000;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        // 粒子系统
-        const pCount = 7000;
-        const geo = new THREE.BufferGeometry();
-        const positions = new Float32Array(pCount * 3);
-        const originalPos = new Float32Array(pCount * 3);
-        for(let i=0; i<pCount*3; i++) {
-            const pos = (Math.random() - 0.5) * 2000;
-            positions[i] = pos;
-            originalPos[i] = pos;
+        // 1. 背景星海
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = new Float32Array(6000 * 3);
+        const starOrigPos = new Float32Array(6000 * 3);
+        for(let i=0; i<6000*3; i++) {
+            const p = (Math.random() - 0.5) * 2000;
+            starPos[i] = p;
+            starOrigPos[i] = p;
         }
-        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-        const mat = new THREE.PointsMaterial({
-            size: 2.2,
-            color: new THREE.Color(config["顽固"].color),
-            transparent: true,
-            opacity: 0.7,
-            blending: THREE.AdditiveBlending
-        });
-
-        const starField = new THREE.Points(geo, mat);
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ size: 1.5, color: 0xffffff, transparent: true, opacity: 0.6 });
+        const starField = new THREE.Points(starGeo, starMat);
         scene.add(starField);
 
-        // --- 核心逻辑 ---
-        window.launchGalaxy = () => {
-            document.getElementById('entry-cover').classList.add('fade-out');
+        // 2. 主题流光粒子
+        const flowGeo = new THREE.BufferGeometry();
+        const flowPos = new Float32Array(1500 * 3);
+        for(let i=0; i<1500*3; i++) flowPos[i] = (Math.random() - 0.5) * 1500;
+        flowGeo.setAttribute('position', new THREE.BufferAttribute(flowPos, 3));
+        const flowMat = new THREE.PointsMaterial({ size: 4, color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending });
+        const flowField = new THREE.Points(flowGeo, flowMat);
+        scene.add(flowField);
+
+        let targetZoom = 1000;
+        let mouseX = 0, mouseY = 0;
+
+        window.startApp = () => {
+            document.getElementById('cover').style.opacity = '0';
+            setTimeout(() => { document.getElementById('cover').style.display = 'none'; }, 2000);
         };
 
-        let targetZ = 1000;
-        window.addEventListener('wheel', (e) => {
-            targetZ = THREE.MathUtils.clamp(targetZ + e.deltaY * 0.6, 300, 1800);
-        });
-
-        function switchTheme(name, event) {
+        function changeTheme(name, event) {
             currentSong = name;
             const data = config[name];
             
-            // UI 更新
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            // 按钮状态更新
+            document.querySelectorAll('.song-btn').forEach(b => b.classList.remove('active'));
             if(event) event.target.classList.add('active');
 
-            // 颜色同步
-            document.documentElement.style.setProperty('--theme-color', data.color);
-            document.documentElement.style.setProperty('--glow-opacity', data.color + "88");
-
-            // 歌词动画
-            const lyricEl = document.getElementById('lyrics-text');
-            lyricEl.classList.add('lyric-transition');
+            // 歌词切换动画 (采用你要求的 transition 效果)
+            const el = document.getElementById('lyrics-text');
+            el.classList.add('lyric-state-change');
             
             setTimeout(() => {
-                const idx = songIndices[name];
-                lyricEl.innerText = data.lyrics[idx];
-                songIndices[name] = (idx + 1) % data.lyrics.length;
-                lyricEl.classList.remove('lyric-transition');
+                const idx = currentIndices[name];
+                el.innerText = data.lyrics[idx];
+                currentIndices[name] = (idx + 1) % data.lyrics.length;
+                
+                // 色彩同步
+                document.documentElement.style.setProperty('--accent', data.color);
+                el.style.textShadow = `0 0 30px ${data.color}aa`;
+                
+                el.classList.remove('lyric-state-change');
+                
+                // 粒子颜色变换
+                flowMat.color.set(data.color);
             }, 800);
-
-            // 粒子颜色变换
-            mat.color.set(data.color);
         }
 
-        // 初始化菜单
-        const menu = document.getElementById('nav-menu');
+        // 初始化按钮
+        const menu = document.getElementById('song-menu');
         Object.keys(config).forEach(name => {
             const btn = document.createElement('div');
-            btn.className = 'nav-item' + (name === "顽固" ? " active" : "");
+            btn.className = 'song-btn' + (name === '顽固' ? ' active' : '');
             btn.innerText = name;
-            btn.onclick = (e) => switchTheme(name, e);
+            btn.onclick = (e) => changeTheme(name, e);
             menu.appendChild(btn);
         });
 
-        // --- 渲染循环 ---
+        window.addEventListener('wheel', (e) => {
+            targetZoom = THREE.MathUtils.clamp(targetZoom + e.deltaY * 0.5, 300, 1800);
+        });
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth/2) * 0.15;
+            mouseY = (e.clientY - window.innerHeight/2) * 0.15;
+        });
+
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
             const mode = config[currentSong].mode;
-            const posAttr = starField.geometry.attributes.position.array;
+            const starPosAttr = starField.geometry.attributes.position.array;
 
-            for(let i=0; i<pCount; i++) {
+            // 不同曲风的背景律动
+            for(let i=0; i<6000; i++) {
                 const i3 = i * 3;
-                if(mode === "ocean") { // 人生海海：波动
-                    posAttr[i3+1] = originalPos[i3+1] + Math.sin(time + originalPos[i3]*0.01) * 45;
-                } 
-                else if(mode === "heartbeat") { // 顽固：律动
-                    const s = 1 + Math.sin(time * 3) * 0.08;
-                    posAttr[i3] = originalPos[i3] * s;
-                    posAttr[i3+1] = originalPos[i3+1] * s;
-                }
-                else if(mode === "dash") { // 勇敢：冲刺
-                    posAttr[i3+2] += 12;
-                    if(posAttr[i3+2] > 1000) posAttr[i3+2] = -1000;
-                }
-                else if(mode === "swirl") { // 一颗苹果：漩涡
-                    const x = posAttr[i3], z = posAttr[i3+2];
-                    posAttr[i3] = x * Math.cos(0.015) - z * Math.sin(0.015);
-                    posAttr[i3+2] = x * Math.sin(0.015) + z * Math.cos(0.015);
-                }
-                else if(mode === "bounce") { // 垃圾车：跳动
-                    posAttr[i3+1] = originalPos[i3+1] + Math.abs(Math.sin(time*4 + i)) * 25;
+                if(mode === "wave") {
+                    starPosAttr[i3+1] = starOrigPos[i3+1] + Math.sin(time + starOrigPos[i3]*0.01) * 35;
+                } else if(mode === "dash") {
+                    starPosAttr[i3+2] += 12;
+                    if(starPosAttr[i3+2] > 1000) starPosAttr[i3+2] = -1000;
+                } else {
+                    starPosAttr[i3] = starOrigPos[i3];
+                    starPosAttr[i3+1] = starOrigPos[i3+1];
                 }
             }
             starField.geometry.attributes.position.needsUpdate = true;
 
-            // 相机平滑
-            camera.position.z += (targetZ - camera.position.z) * 0.05;
+            // 前景粒子的特殊动态
+            flowField.rotation.y += 0.0015;
+            if(mode === "pulse") {
+                const s = 1 + Math.sin(time * 3) * 0.12;
+                flowField.scale.set(s, s, s);
+            } else if(mode === "vortex") {
+                flowField.rotation.z += 0.012;
+            } else if(mode === "jump") {
+                flowField.position.y = Math.abs(Math.sin(time * 4)) * 20;
+            } else {
+                flowField.scale.set(1, 1, 1);
+                flowField.position.y = 0;
+            }
+
+            // 相机平滑移动与缩放
+            camera.position.z += (targetZoom - camera.position.z) * 0.05;
+            camera.position.x += (mouseX - camera.position.x) * 0.04;
+            camera.position.y += (-mouseY - camera.position.y) * 0.04;
             camera.lookAt(0,0,0);
-            starField.rotation.y += 0.0006;
 
             renderer.render(scene, camera);
         }
 
         animate();
-
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // 初始化背景色
-        switchTheme("顽固", null);
+        // 初始化色彩
+        document.documentElement.style.setProperty('--accent', config["顽固"].color);
     </script>
 </body>
 </html>
