@@ -2,19 +2,16 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mayday · 寄往银河的诗</title>
     <style>
         :root { --accent: #ffffff; }
         
-        /* 适配 iPhone 屏幕 */
         html, body { 
-            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+            margin: 0; padding: 0; width: 100%; height: 100vh; overflow: hidden; 
             background-color: #000; 
             font-family: "Optima", "PingFang SC", "STHeiti", "Microsoft YaHei", sans-serif; 
-            color: white; 
-            user-select: none;
-            touch-action: manipulation; /* 消除点击延迟 */
+            color: white; user-select: none;
         }
 
         /* 入场封面 */
@@ -23,60 +20,50 @@
             background: radial-gradient(circle at center, #111 0%, #000 100%); 
             z-index: 2000; display: flex;
             flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1.5s ease; cursor: pointer;
+            transition: opacity 2s ease; cursor: pointer;
         }
-        #cover p { letter-spacing: 8px; font-weight: 200; opacity: 0.8; font-size: 1.2rem; margin: 0; }
-        #cover span { font-size: 10px; margin-top: 20px; opacity: 0.4; letter-spacing: 2px; border: 1px solid #fff; padding: 4px 12px; border-radius: 20px; }
+        #cover p { letter-spacing: 12px; font-weight: 200; opacity: 0.8; font-size: 1.4rem; margin: 0; }
+        #cover span { font-size: 11px; margin-top: 25px; opacity: 0.4; letter-spacing: 3px; border: 1px solid #fff; padding: 5px 15px; border-radius: 20px; }
 
-        /* 歌词区 - 针对移动端缩小字号 */
+        /* 歌词区 - 采用你要求的字体效果 */
         #lyrics-container {
-            position: fixed; top: 44%; left: 0; width: 100%;
-            text-align: center; z-index: 100; pointer-events: none;
-            padding: 0 20px; box-sizing: border-box;
+            position: fixed; top: 46%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; text-align: center; z-index: 100; pointer-events: none;
         }
         #lyrics-text {
-            font-size: 1.6rem; /* 针对 iPhone 12 优化的字号 */
-            font-weight: 300; letter-spacing: 4px; line-height: 1.6;
-            transition: all 0.8s cubic-bezier(0.2, 0, 0.2, 1);
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+            font-size: 2.2rem; font-weight: 300; letter-spacing: 8px; line-height: 1.8;
+            transition: all 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
             color: var(--accent); margin: 0;
-            word-wrap: break-word;
         }
         /* 消散过渡效果 */
         .lyric-state-change { 
-            opacity: 0; 
-            transform: scale(0.92) translateY(10px); 
-            filter: blur(12px) !important; 
+            opacity: 0; transform: scale(0.95) translateY(15px); 
+            filter: blur(15px) !important; 
         }
 
-        /* 底部菜单 - 适配 iPhone 底部安全区 */
+        /* 底部菜单 - 修正定位问题 */
         #song-menu {
-            position: fixed; 
-            bottom: calc(40px + env(safe-area-inset-bottom)); /* 避开 iPhone 横条 */
-            left: 0; width: 100%; 
+            position: fixed; bottom: 50px; left: 0; width: 100%;
             display: flex; justify-content: center; align-items: center;
-            gap: 10px; flex-wrap: wrap; z-index: 1000;
-            padding: 0 15px; box-sizing: border-box;
+            gap: 15px; flex-wrap: wrap; z-index: 1000;
         }
         .song-btn {
-            background: rgba(255,255,255,0.08); border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 16px; border-radius: 20px; cursor: pointer;
-            font-size: 0.75rem; transition: all 0.3s; letter-spacing: 1px;
-            color: rgba(255,255,255,0.6); backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            -webkit-tap-highlight-color: transparent; /* 消除点击高亮 */
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 20px; border-radius: 30px; cursor: pointer;
+            font-size: 0.85rem; transition: all 0.5s; letter-spacing: 2px;
+            color: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
+            white-space: nowrap;
         }
+        .song-btn:hover { border-color: white; color: white; background: rgba(255,255,255,0.15); transform: translateY(-3px); }
         .song-btn.active { 
             border-color: var(--accent); color: var(--accent); 
-            box-shadow: 0 0 15px var(--accent);
-            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 20px var(--accent); background: rgba(255,255,255,0.1);
         }
 
-        #footer-note {
-            position: fixed; bottom: calc(10px + env(safe-area-inset-bottom)); 
-            left: 20px; font-size: 9px; opacity: 0.2; letter-spacing: 1px; z-index: 100;
-        }
-        canvas { display: block; width: 100% !important; height: 100% !important; }
+        #footer-note { position: fixed; bottom: 20px; left: 30px; font-size: 10px; opacity: 0.3; letter-spacing: 2px; z-index: 100; }
+        #scroll-hint { position: fixed; top: 30px; width: 100%; text-align: center; font-size: 9px; opacity: 0.2; letter-spacing: 5px; }
+        canvas { display: block; }
     </style>
 </head>
 <body>
@@ -86,6 +73,7 @@
         <span>点击开启银河之旅</span>
     </div>
 
+    <div id="scroll-hint">SCROLL TO FLY THROUGH THE STARS</div>
     <div id="footer-note">FOR MY BEST FRIEND · MAYDAY FOREVER</div>
 
     <div id="lyrics-container">
@@ -101,7 +89,7 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- 沿用上一组律动逻辑 (Mode) ---
+        // --- 核心配置：集成律动模式 (Mode) ---
         const config = {
             "顽固": { color: "#FFD700", bg: "#151000", mode: "pulse", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
             "人生海海": { color: "#4EA1FF", bg: "#000814", mode: "wave", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "明天我依然装作 快乐且洒脱", "那是我的骄傲 太阳在等我"] },
@@ -116,21 +104,21 @@
         let currentIndices = {};
         Object.keys(config).forEach(k => currentIndices[k] = 0);
 
-        // --- 1. Three.js 初始化 (针对移动端性能优化) ---
+        // --- Three.js 初始化 ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2500);
         camera.position.z = 1000;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        // iPhone 12 屏幕密度高，限制为 2 即可保证清晰且流畅
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        const particleCount = 5000; // 核心律动粒子
+        // 核心粒子系统
+        const particleCount = 5000;
         const geo = new THREE.BufferGeometry();
         const posArray = new Float32Array(particleCount * 3);
-        const basePos = new Float32Array(particleCount * 3);
+        const basePos = new Float32Array(particleCount * 3); // 记录原始位置
 
         for(let i=0; i<particleCount * 3; i++) {
             const p = (Math.random() - 0.5) * 1800;
@@ -140,7 +128,7 @@
         geo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
         const mat = new THREE.PointsMaterial({
-            size: 2.5,
+            size: 2,
             color: new THREE.Color(config[currentSong].color),
             transparent: true,
             opacity: 0.8,
@@ -150,24 +138,20 @@
         const particles = new THREE.Points(geo, mat);
         scene.add(particles);
 
+        // 交互参数
         let targetZoom = 1000;
         let mouseX = 0, mouseY = 0;
 
         window.startApp = () => {
             document.getElementById('cover').style.opacity = '0';
-            setTimeout(() => { document.getElementById('cover').style.display = 'none'; }, 1500);
+            setTimeout(() => { document.getElementById('cover').style.display = 'none'; }, 2000);
         };
 
-        // --- 核心交互优化：确保无延迟 ---
         function changeTheme(name, event) {
-            if(name === currentSong && event) {
-                // 如果点的是当前已选歌曲，依然切换下一段歌词，但不重置主题色逻辑
-            }
-            
             currentSong = name;
             const data = config[name];
             
-            // 按钮状态瞬间响应
+            // 按钮状态切换
             document.querySelectorAll('.song-btn').forEach(b => b.classList.remove('active'));
             if(event) {
                 event.currentTarget.classList.add('active');
@@ -176,42 +160,45 @@
                 btns.forEach(b => { if(b.innerText === name) b.classList.add('active'); });
             }
 
+            // 歌词动画：消散效果
             const el = document.getElementById('lyrics-text');
-            // 先添加消散类
             el.classList.add('lyric-state-change');
             
-            // 缩短切换间隔时间，提升 iPhone 上的“爽快感”
             setTimeout(() => {
                 const idx = currentIndices[name];
                 el.innerText = data.lyrics[idx];
                 currentIndices[name] = (idx + 1) % data.lyrics.length;
                 
+                // 色彩同步更新
                 document.documentElement.style.setProperty('--accent', data.color);
-                el.style.textShadow = `0 0 20px ${data.color}88`;
-                
+                el.style.textShadow = `0 0 30px ${data.color}aa`;
                 el.classList.remove('lyric-state-change');
+                
+                // 背景与粒子颜色变换
+                document.body.style.backgroundColor = data.bg;
                 mat.color.set(data.color);
-            }, 500); // 500ms 快速翻转，更适合移动端
+            }, 800);
         }
 
+        // 初始化菜单
         const menu = document.getElementById('song-menu');
         Object.keys(config).forEach(name => {
             const btn = document.createElement('div');
             btn.className = 'song-btn';
             btn.innerText = name;
-            // 移动端优先使用 click 配合 touch-action
-            btn.addEventListener('click', (e) => changeTheme(name, e));
+            btn.onclick = (e) => changeTheme(name, e);
             menu.appendChild(btn);
         });
 
-        // 针对移动端的触摸位移
-        window.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            mouseX = (touch.clientX - window.innerWidth/2) * 0.15;
-            mouseY = (touch.clientY - window.innerHeight/2) * 0.15;
-        }, { passive: true });
+        window.addEventListener('wheel', (e) => {
+            targetZoom = THREE.MathUtils.clamp(targetZoom + e.deltaY * 0.5, 300, 1800);
+        });
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth/2) * 0.15;
+            mouseY = (e.clientY - window.innerHeight/2) * 0.15;
+        });
 
-        // --- 核心动画逻辑 (沿用上一版) ---
+        // --- 核心动画逻辑：参考并优化你提供的律动效果 ---
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
@@ -220,35 +207,47 @@
 
             for(let i=0; i<particleCount; i++) {
                 const i3 = i * 3;
-                if(mode === "wave") { 
+                
+                if(mode === "wave") { // 人生海海：海浪
                     positions[i3 + 1] = basePos[i3 + 1] + Math.sin(time + basePos[i3]*0.01) * 50;
-                } else if(mode === "pulse") { 
-                    const s = 1 + Math.sin(time * 3) * 0.1;
-                    positions[i3] = basePos[i3] * s; positions[i3+1] = basePos[i3+1] * s;
-                } else if(mode === "float") { 
+                } 
+                else if(mode === "pulse") { // 顽固：心脏跳动
+                    const s = 1 + Math.sin(time * 3) * 0.12;
+                    positions[i3] = basePos[i3] * s;
+                    positions[i3+1] = basePos[i3+1] * s;
+                    positions[i3+2] = basePos[i3+2] * s;
+                }
+                else if(mode === "float") { // 笑忘歌：轻盈上升
                     positions[i3+1] += 1.5;
                     if(positions[i3+1] > 1000) positions[i3+1] = -1000;
-                } else if(mode === "vortex") { 
-                    const x = positions[i3], z = positions[i3+2];
+                }
+                else if(mode === "vortex") { // 一颗苹果：旋转
+                    const x = positions[i3];
+                    const z = positions[i3+2];
                     const angle = 0.015;
                     positions[i3] = x * Math.cos(angle) - z * Math.sin(angle);
                     positions[i3+2] = x * Math.sin(angle) + z * Math.cos(angle);
-                } else if(mode === "jump") { 
+                }
+                else if(mode === "jump") { // 垃圾车：欢快跳动
                     positions[i3+1] = basePos[i3+1] + Math.abs(Math.sin(time*5 + i)) * 30;
-                } else if(mode === "dash") { 
+                }
+                else if(mode === "dash") { // 勇敢：风速感
                     positions[i3] += 25;
                     if(positions[i3] > 1000) positions[i3] = -1000;
-                } else { 
+                }
+                else { // 爱情的模样：扩散/呼吸
                     positions[i3] = basePos[i3] + Math.sin(time + i) * 15;
                     positions[i3+1] = basePos[i3+1] + Math.cos(time + i) * 15;
                 }
             }
             particles.geometry.attributes.position.needsUpdate = true;
 
+            // 摄像机平滑移动与缩放
             camera.position.z += (targetZoom - camera.position.z) * 0.05;
-            camera.position.x += (mouseX - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.position.x += (mouseX - camera.position.x) * 0.04;
+            camera.position.y += (-mouseY - camera.position.y) * 0.04;
             camera.lookAt(0,0,0);
+
             renderer.render(scene, camera);
         }
 
@@ -259,6 +258,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        // 初始化显示第一首
         changeTheme("顽固", null);
     </script>
 </body>
