@@ -25,7 +25,7 @@
         #cover p { letter-spacing: 12px; font-weight: 200; opacity: 0.8; font-size: 1.4rem; margin: 0; }
         #cover span { font-size: 11px; margin-top: 25px; opacity: 0.4; letter-spacing: 3px; border: 1px solid #fff; padding: 5px 15px; border-radius: 20px; }
 
-        /* 歌词区 - 字体效果 */
+        /* 歌词区 - 采用你要求的字体效果 */
         #lyrics-container {
             position: fixed; top: 46%; left: 50%; transform: translate(-50%, -50%);
             width: 85%; text-align: center; z-index: 100; pointer-events: none;
@@ -36,21 +36,22 @@
             filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
             color: var(--accent); margin: 0;
         }
+        /* 消散过渡效果 */
         .lyric-state-change { 
             opacity: 0; transform: scale(0.95) translateY(15px); 
             filter: blur(15px) !important; 
         }
 
-        /* 底部菜单 - 确保居中且不消失 */
+        /* 底部菜单 - 修正定位问题 */
         #song-menu {
             position: fixed; bottom: 50px; left: 0; width: 100%;
             display: flex; justify-content: center; align-items: center;
-            gap: 12px; flex-wrap: wrap; z-index: 1000;
+            gap: 15px; flex-wrap: wrap; z-index: 1000;
         }
         .song-btn {
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 18px; border-radius: 30px; cursor: pointer;
-            font-size: 0.8rem; transition: all 0.5s; letter-spacing: 2px;
+            padding: 8px 20px; border-radius: 30px; cursor: pointer;
+            font-size: 0.85rem; transition: all 0.5s; letter-spacing: 2px;
             color: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
             white-space: nowrap;
         }
@@ -88,15 +89,15 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- 每首歌对应专属的 mode ---
+        // --- 核心配置：集成律动模式 (Mode) ---
         const config = {
-            "顽固": { color: "#FFD700", mode: "heartbeat", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
-            "人生海海": { color: "#4EA1FF", mode: "ocean", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "那是我的骄傲 太阳在等我", "明天我依然装作 快乐且洒脱"] },
-            "笑忘歌": { color: "#FFB6C1", mode: "balloons", lyrics: ["这一生志愿只要平凡快乐", "谁说这样不伟大呢", "手牵手 一起唱 永远都记得", "天真的笑脸 依旧在开放"] },
-            "一颗苹果": { color: "#FF4500", mode: "vortex", lyrics: ["时间如果我们不珍惜 就会走得很快", "活着其实很好 再吃一颗苹果", "总要有一首我的歌 哪怕没人合", "大概是 只要我现在 觉得快乐"] },
-            "爱情的模样": { color: "#B19CD9", mode: "nebula", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是爱情的模样 晴天或阴天", "在你的身上 找到我遗失的翅膀"] },
-            "垃圾车": { color: "#F0E68C", mode: "bouncing", lyrics: ["有你 我才没那么孤单", "你是我的垃圾车 每天为你唱歌", "虽然你偶尔会 乱发脾气", "但你是我 永远的好兄弟"] },
-            "勇敢": { color: "#20B2AA", mode: "warp", lyrics: ["风若吹 乱我的头发 也不惊惶", "我知道 终会有一个未来", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
+            "顽固": { color: "#FFD700", bg: "#151000", mode: "pulse", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
+            "人生海海": { color: "#4EA1FF", bg: "#000814", mode: "wave", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "明天我依然装作 快乐且洒脱", "那是我的骄傲 太阳在等我"] },
+            "笑忘歌": { color: "#FFB6C1", bg: "#12080a", mode: "float", lyrics: ["这一生志愿只要平凡快乐", "谁说这样不伟大呢", "手牵手 一起唱 永远都记得", "天真的笑脸 依旧在开放"] },
+            "一颗苹果": { color: "#FF4500", bg: "#100400", mode: "vortex", lyrics: ["时间如果我们不珍惜 就会走得很快", "活着其实很好 再吃一颗苹果", "总要有一首我的歌 哪怕没人合", "大概是 只要我现在 觉得快乐"] },
+            "爱情的模样": { color: "#B19CD9", bg: "#080010", mode: "expand", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是爱情的模样 晴天或阴天", "在你的身上 找到我遗失的翅膀"] },
+            "垃圾车": { color: "#F0E68C", bg: "#101000", mode: "jump", lyrics: ["有你 我才没那么孤单", "你是我的垃圾车 每天为你唱歌", "虽然你偶尔会 乱发脾气", "但你是我 永远的好兄弟"] },
+            "勇敢": { color: "#20B2AA", bg: "#00100d", mode: "dash", lyrics: ["风若吹 乱我的头发 也不惊惶", "我知道 终会有一个未来", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
         };
 
         let currentSong = "顽固";
@@ -113,30 +114,31 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        // 星团数据
-        const particleCount = 6000;
-        const starGeo = new THREE.BufferGeometry();
-        const starPos = new Float32Array(particleCount * 3);
-        const starOrigPos = new Float32Array(particleCount * 3);
-        for(let i=0; i<particleCount*3; i++) {
-            const p = (Math.random() - 0.5) * 2000;
-            starPos[i] = p;
-            starOrigPos[i] = p;
+        // 核心粒子系统
+        const particleCount = 5000;
+        const geo = new THREE.BufferGeometry();
+        const posArray = new Float32Array(particleCount * 3);
+        const basePos = new Float32Array(particleCount * 3); // 记录原始位置
+
+        for(let i=0; i<particleCount * 3; i++) {
+            const p = (Math.random() - 0.5) * 1800;
+            posArray[i] = p;
+            basePos[i] = p;
         }
-        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        const starMat = new THREE.PointsMaterial({ size: 1.5, color: 0xffffff, transparent: true, opacity: 0.6 });
-        const starField = new THREE.Points(starGeo, starMat);
-        scene.add(starField);
+        geo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
-        // 主题粒子 (流光)
-        const flowGeo = new THREE.BufferGeometry();
-        const flowPos = new Float32Array(1500 * 3);
-        for(let i=0; i<1500*3; i++) flowPos[i] = (Math.random() - 0.5) * 1500;
-        flowGeo.setAttribute('position', new THREE.BufferAttribute(flowPos, 3));
-        const flowMat = new THREE.PointsMaterial({ size: 4, color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending });
-        const flowField = new THREE.Points(flowGeo, flowMat);
-        scene.add(flowField);
+        const mat = new THREE.PointsMaterial({
+            size: 2,
+            color: new THREE.Color(config[currentSong].color),
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
 
+        const particles = new THREE.Points(geo, mat);
+        scene.add(particles);
+
+        // 交互参数
         let targetZoom = 1000;
         let mouseX = 0, mouseY = 0;
 
@@ -149,15 +151,16 @@
             currentSong = name;
             const data = config[name];
             
+            // 按钮状态切换
             document.querySelectorAll('.song-btn').forEach(b => b.classList.remove('active'));
             if(event) {
                 event.currentTarget.classList.add('active');
             } else {
-                // 初始化首屏按钮状态
                 const btns = document.querySelectorAll('.song-btn');
                 btns.forEach(b => { if(b.innerText === name) b.classList.add('active'); });
             }
 
+            // 歌词动画：消散效果
             const el = document.getElementById('lyrics-text');
             el.classList.add('lyric-state-change');
             
@@ -165,13 +168,19 @@
                 const idx = currentIndices[name];
                 el.innerText = data.lyrics[idx];
                 currentIndices[name] = (idx + 1) % data.lyrics.length;
+                
+                // 色彩同步更新
                 document.documentElement.style.setProperty('--accent', data.color);
                 el.style.textShadow = `0 0 30px ${data.color}aa`;
                 el.classList.remove('lyric-state-change');
-                flowMat.color.set(data.color);
+                
+                // 背景与粒子颜色变换
+                document.body.style.backgroundColor = data.bg;
+                mat.color.set(data.color);
             }, 800);
         }
 
+        // 初始化菜单
         const menu = document.getElementById('song-menu');
         Object.keys(config).forEach(name => {
             const btn = document.createElement('div');
@@ -189,63 +198,51 @@
             mouseY = (e.clientY - window.innerHeight/2) * 0.15;
         });
 
+        // --- 核心动画逻辑：参考并优化你提供的律动效果 ---
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
+            const positions = particles.geometry.attributes.position.array;
             const mode = config[currentSong].mode;
-            const positions = starField.geometry.attributes.position.array;
 
             for(let i=0; i<particleCount; i++) {
                 const i3 = i * 3;
-                const ox = starOrigPos[i3], oy = starOrigPos[i3+1], oz = starOrigPos[i3+2];
-
-                switch(mode) {
-                    case "heartbeat": // 顽固：脉动
-                        const s = 1 + Math.sin(time * 3) * 0.08;
-                        positions[i3] = ox * s;
-                        positions[i3+1] = oy * s;
-                        positions[i3+2] = oz * s;
-                        break;
-                    
-                    case "ocean": // 人生海海：三维海浪
-                        positions[i3+1] = oy + Math.sin(time + ox * 0.01) * 40;
-                        positions[i3+2] = oz + Math.cos(time + oy * 0.01) * 40;
-                        break;
-
-                    case "balloons": // 笑忘歌：轻盈上升
-                        positions[i3+1] += 1.0 + Math.sin(time + i) * 0.5;
-                        positions[i3] = ox + Math.sin(time + oy * 0.01) * 20;
-                        if(positions[i3+1] > 1000) positions[i3+1] = -1000;
-                        break;
-
-                    case "vortex": // 一颗苹果：星系漩涡
-                        const x = positions[i3], z = positions[i3+2];
-                        const angle = 0.015;
-                        positions[i3] = x * Math.cos(angle) - z * Math.sin(angle);
-                        positions[i3+2] = x * Math.sin(angle) + z * Math.cos(angle);
-                        break;
-
-                    case "nebula": // 爱情的模样：微观呼吸
-                        positions[i3] = ox + Math.sin(time * 0.5 + i) * 15;
-                        positions[i3+1] = oy + Math.cos(time * 0.5 + i) * 15;
-                        break;
-
-                    case "bouncing": // 垃圾车：同步跳跃
-                        positions[i3+1] = oy + Math.abs(Math.sin(time * 4 + (ox/500))) * 40;
-                        break;
-
-                    case "warp": // 勇敢：穿梭飞驰
-                        positions[i3+2] += 18;
-                        if(positions[i3+2] > 1000) positions[i3+2] = -1500;
-                        break;
+                
+                if(mode === "wave") { // 人生海海：海浪
+                    positions[i3 + 1] = basePos[i3 + 1] + Math.sin(time + basePos[i3]*0.01) * 50;
+                } 
+                else if(mode === "pulse") { // 顽固：心脏跳动
+                    const s = 1 + Math.sin(time * 3) * 0.12;
+                    positions[i3] = basePos[i3] * s;
+                    positions[i3+1] = basePos[i3+1] * s;
+                    positions[i3+2] = basePos[i3+2] * s;
+                }
+                else if(mode === "float") { // 笑忘歌：轻盈上升
+                    positions[i3+1] += 1.5;
+                    if(positions[i3+1] > 1000) positions[i3+1] = -1000;
+                }
+                else if(mode === "vortex") { // 一颗苹果：旋转
+                    const x = positions[i3];
+                    const z = positions[i3+2];
+                    const angle = 0.015;
+                    positions[i3] = x * Math.cos(angle) - z * Math.sin(angle);
+                    positions[i3+2] = x * Math.sin(angle) + z * Math.cos(angle);
+                }
+                else if(mode === "jump") { // 垃圾车：欢快跳动
+                    positions[i3+1] = basePos[i3+1] + Math.abs(Math.sin(time*5 + i)) * 30;
+                }
+                else if(mode === "dash") { // 勇敢：风速感
+                    positions[i3] += 25;
+                    if(positions[i3] > 1000) positions[i3] = -1000;
+                }
+                else { // 爱情的模样：扩散/呼吸
+                    positions[i3] = basePos[i3] + Math.sin(time + i) * 15;
+                    positions[i3+1] = basePos[i3+1] + Math.cos(time + i) * 15;
                 }
             }
-            starField.geometry.attributes.position.needsUpdate = true;
+            particles.geometry.attributes.position.needsUpdate = true;
 
-            // 流光粒子旋转
-            flowField.rotation.y += 0.0015;
-
-            // 相机控制
+            // 摄像机平滑移动与缩放
             camera.position.z += (targetZoom - camera.position.z) * 0.05;
             camera.position.x += (mouseX - camera.position.x) * 0.04;
             camera.position.y += (-mouseY - camera.position.y) * 0.04;
@@ -261,9 +258,8 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // 初始化
+        // 初始化显示第一首
         changeTheme("顽固", null);
-        document.documentElement.style.setProperty('--accent', config["顽固"].color);
     </script>
 </body>
 </html>
