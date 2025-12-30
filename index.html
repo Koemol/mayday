@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>如果五月天抱了你一下</title>
+<title>如果五月天懂你</title>
 
 <style>
 body {
   margin: 0;
-  background: linear-gradient(180deg, #fdfcfb, #f3f4f6);
+  background: linear-gradient(180deg, #fffefc, #f5f7fb);
   color: #374151;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
 }
 .container {
   max-width: 420px;
   margin: auto;
-  padding: 40px 20px 60px;
+  padding: 42px 20px 70px;
 }
 h1 {
   font-size: 22px;
@@ -27,40 +27,55 @@ h1 {
   margin-bottom: 28px;
 }
 .song {
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  border-radius: 14px;
+  padding: 15px 18px;
+  margin-bottom: 14px;
+  border-radius: 18px;
   background: #ffffff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: transform .25s ease, box-shadow .25s ease;
 }
 .song:active {
-  transform: scale(0.98);
+  transform: translateY(-3px) scale(0.98);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
 }
 .lyric {
-  margin-top: 28px;
+  margin-top: 30px;
   white-space: pre-line;
   line-height: 1.9;
   font-size: 16px;
-  min-height: 120px;
+  min-height: 140px;
+  opacity: 0;
+  animation: fadeIn .8s forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .footer {
-  margin-top: 40px;
+  margin-top: 42px;
   font-size: 13px;
   color: #9ca3af;
   text-align: center;
 }
-.easter {
+.breath {
+  animation: breath 4s ease-in-out infinite;
+}
+@keyframes breath {
+  0%,100% { opacity: .7; }
+  50% { opacity: 1; }
+}
+.secret-dot {
   margin-top: 10px;
   font-size: 12px;
-  color: #c7cdd8;
+  color: #d1d5db;
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-  <h1>如果五月天抱了你一下</h1>
-  <div class="subtitle">选一首歌，慢慢看完就好</div>
+  <h1>如果五月天懂你</h1>
+  <div class="subtitle breath">选一首歌，让它慢慢靠近你</div>
 
   <div class="song" onclick="playSong('顽固')">🎧 顽固</div>
   <div class="song" onclick="playSong('人生海海')">🎧 人生海海</div>
@@ -73,52 +88,52 @@ h1 {
   <div id="lyric" class="lyric"></div>
 
   <div class="footer">
-    五月天没有写你的名字<br>
-    但这首歌懂你
-    <div class="easter" onclick="secret()"> · </div>
+    有些歌不是为谁写的<br>
+    但你刚好听懂了
+    <div class="secret-dot" onclick="hidden()"> · </div>
   </div>
 </div>
 
 <audio id="bgm" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/10/20/audio_7c2f3a5d2c.mp3?filename=soft-piano-ambient-125566.mp3" type="audio/mpeg">
+  <source src="https://cdn.pixabay.com/download/audio/2022/11/04/audio_1c4f8f9f63.mp3?filename=gentle-piano-ambient-126086.mp3" type="audio/mpeg">
 </audio>
 
 <script>
 const texts = {
   "顽固": [
-    "你不是不知道放弃比较轻松。\n只是你不想否定走到今天的自己。",
-    "你一直在坚持。\n不是因为倔强，\n而是因为你还相信。",
-    "有些路走得慢，\n但你没有停下。"
+    "你并不是不知道放弃会轻松一点。\n只是你还想对得起一路走来的自己。",
+    "你选择坚持，不是因为倔。\n而是因为你心里还有相信。",
+    "慢一点没关系。\n你没有停下。"
   ],
   "人生海海": [
-    "人生不会一直顺风。\n但你已经学会稳稳站着。",
-    "你见过浪，也走过夜。\n现在的你，比以前更安静。",
-    "不解释，也是一种成熟。"
+    "你已经见过很多风浪了。\n现在的你，反而更安静。",
+    "不解释，不争辩。\n也是一种力量。",
+    "人生很大。\n你学会让自己站稳。"
   ],
   "笑忘歌": [
-    "你没有忘记。\n只是终于不再疼了。",
-    "有些回忆，\n已经变成了背景。",
-    "你正在往前，\n而不是逃走。"
+    "你没有忘记。\n只是终于不会再被拉回去。",
+    "有些回忆，已经变得温和。",
+    "你在往前走。\n不是逃开。"
   ],
   "一颗苹果": [
-    "世界给你的不多。\n但你还是很认真地生活。",
-    "你知道自己拥有的，\n不止眼前这些。",
-    "一颗苹果，\n也能吃出甜。"
+    "就算得到的不多。\n你也没有敷衍生活。",
+    "你知道，自己并不是空手。",
+    "认真过日子的人，\n总会留下些什么。"
   ],
   "爱情的模样": [
-    "你想要的爱情，是安心。",
-    "不是委屈自己，\n去换陪伴。",
-    "被喜欢的时候，\n你不该变小。"
+    "你想要的爱，是自在。",
+    "不是用忍，换来的陪伴。",
+    "被喜欢的时候，\n你应该是松的。"
   ],
   "垃圾车": [
-    "你已经丢掉很多了。",
-    "现在的你，\n在为以后腾位置。",
-    "轻一点，\n日子会慢慢变好。"
+    "你已经学会丢掉不合适的东西。",
+    "轻一点。\n世界会慢慢给你空间。",
+    "不是失去。\n是整理。"
   ],
   "勇敢": [
-    "你不是不害怕。",
-    "你只是一次次选择继续。",
-    "这样已经很勇敢了。"
+    "你不是没有害怕。",
+    "你只是没有停下。",
+    "走到这里，\n已经很勇敢了。"
   ]
 };
 
@@ -132,21 +147,25 @@ function playSong(name) {
 
 function typeText(text) {
   const el = document.getElementById("lyric");
-  el.innerText = "";
-  let i = 0;
-  const timer = setInterval(() => {
-    el.innerText += text[i];
-    i++;
-    if (i >= text.length) clearInterval(timer);
-  }, 50);
+  el.style.opacity = 0;
+  setTimeout(() => {
+    el.innerText = "";
+    el.style.opacity = 1;
+    let i = 0;
+    const timer = setInterval(() => {
+      el.innerText += text[i];
+      i++;
+      if (i >= text.length) clearInterval(timer);
+    }, 45);
+  }, 200);
 }
 
-// 彩蛋 1：点 7 次
-let count = 0;
-function secret() {
-  count++;
-  if (count === 7) {
-    alert("有人希望你被温柔对待。");
+// 彩蛋：点 7 次
+let c = 0;
+function hidden() {
+  c++;
+  if (c === 7) {
+    alert("有人在你不知道的时候，希望你被好好对待。");
   }
 }
 </script>
