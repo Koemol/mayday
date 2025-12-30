@@ -8,46 +8,51 @@
 <style>
 body {
   margin: 0;
-  background: linear-gradient(180deg, #020617, #0f172a);
-  color: #e5e7eb;
+  background: linear-gradient(180deg, #fdfcfb, #f3f4f6);
+  color: #374151;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-  min-height: 100vh;
 }
 .container {
   max-width: 420px;
   margin: auto;
-  padding: 40px 20px;
+  padding: 40px 20px 60px;
 }
 h1 {
   font-size: 22px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 .subtitle {
-  opacity: 0.7;
   font-size: 14px;
-  margin-bottom: 30px;
+  color: #6b7280;
+  margin-bottom: 28px;
 }
 .song {
-  padding: 14px;
+  padding: 14px 16px;
   margin-bottom: 12px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
 }
-.song:hover {
-  background: rgba(255,255,255,0.1);
+.song:active {
+  transform: scale(0.98);
 }
 .lyric {
-  margin-top: 30px;
+  margin-top: 28px;
   white-space: pre-line;
-  line-height: 1.8;
+  line-height: 1.9;
   font-size: 16px;
   min-height: 120px;
 }
 .footer {
   margin-top: 40px;
   font-size: 13px;
-  opacity: 0.5;
+  color: #9ca3af;
   text-align: center;
+}
+.easter {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #c7cdd8;
 }
 </style>
 </head>
@@ -55,7 +60,7 @@ h1 {
 <body>
 <div class="container">
   <h1>如果五月天抱了你一下</h1>
-  <div class="subtitle">选一首歌，让它陪你一会儿</div>
+  <div class="subtitle">选一首歌，慢慢看完就好</div>
 
   <div class="song" onclick="playSong('顽固')">🎧 顽固</div>
   <div class="song" onclick="playSong('人生海海')">🎧 人生海海</div>
@@ -70,28 +75,59 @@ h1 {
   <div class="footer">
     五月天没有写你的名字<br>
     但这首歌懂你
+    <div class="easter" onclick="secret()"> · </div>
   </div>
 </div>
 
 <audio id="bgm" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5f5c2c5d62.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+  <source src="https://cdn.pixabay.com/download/audio/2022/10/20/audio_7c2f3a5d2c.mp3?filename=soft-piano-ambient-125566.mp3" type="audio/mpeg">
 </audio>
 
 <script>
 const texts = {
-  "顽固": "你不是不知道放弃比较轻松。\n只是你不想对不起走到今天的自己。",
-  "人生海海": "人生不会一直顺风。\n但你已经学会，在风浪里站稳。",
-  "笑忘歌": "有些回忆不需要天天想起。\n你已经把它们，放在了不会疼的位置。",
-  "一颗苹果": "就算世界只给你一颗苹果。\n你也还是想，好好地吃完它。",
-  "爱情的模样": "你想要的爱情，是自在。\n不是委屈自己，换来的陪伴。",
-  "垃圾车": "你已经丢掉很多了。\n现在的你，在给未来腾位置。",
-  "勇敢": "你不是不害怕。\n你只是依然选择往前走。"
+  "顽固": [
+    "你不是不知道放弃比较轻松。\n只是你不想否定走到今天的自己。",
+    "你一直在坚持。\n不是因为倔强，\n而是因为你还相信。",
+    "有些路走得慢，\n但你没有停下。"
+  ],
+  "人生海海": [
+    "人生不会一直顺风。\n但你已经学会稳稳站着。",
+    "你见过浪，也走过夜。\n现在的你，比以前更安静。",
+    "不解释，也是一种成熟。"
+  ],
+  "笑忘歌": [
+    "你没有忘记。\n只是终于不再疼了。",
+    "有些回忆，\n已经变成了背景。",
+    "你正在往前，\n而不是逃走。"
+  ],
+  "一颗苹果": [
+    "世界给你的不多。\n但你还是很认真地生活。",
+    "你知道自己拥有的，\n不止眼前这些。",
+    "一颗苹果，\n也能吃出甜。"
+  ],
+  "爱情的模样": [
+    "你想要的爱情，是安心。",
+    "不是委屈自己，\n去换陪伴。",
+    "被喜欢的时候，\n你不该变小。"
+  ],
+  "垃圾车": [
+    "你已经丢掉很多了。",
+    "现在的你，\n在为以后腾位置。",
+    "轻一点，\n日子会慢慢变好。"
+  ],
+  "勇敢": [
+    "你不是不害怕。",
+    "你只是一次次选择继续。",
+    "这样已经很勇敢了。"
+  ]
 };
 
 function playSong(name) {
   const audio = document.getElementById("bgm");
   audio.play();
-  typeText(texts[name]);
+  const list = texts[name];
+  const text = list[Math.floor(Math.random() * list.length)];
+  typeText(text);
 }
 
 function typeText(text) {
@@ -102,7 +138,16 @@ function typeText(text) {
     el.innerText += text[i];
     i++;
     if (i >= text.length) clearInterval(timer);
-  }, 40);
+  }, 50);
+}
+
+// 彩蛋 1：点 7 次
+let count = 0;
+function secret() {
+  count++;
+  if (count === 7) {
+    alert("有人希望你被温柔对待。");
+  }
 }
 </script>
 
