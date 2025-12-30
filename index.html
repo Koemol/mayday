@@ -48,35 +48,26 @@
         }
    .lyric-state-change { opacity: 0; transform: scale(0.95) translateY(10px); filter: blur(15px); }
 
-        /* 高级菜单 UI */
-        #nav-menu {
-            position: absolute; bottom: 60px; width: 100%;
-            display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; z-index: 1000;
+        /* 底部菜单 */
+        #song-menu {
+            position: absolute; bottom: 50px; width: 100%;
+            display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; z-index: 1000;
         }
-
-        .nav-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 24px; border-radius: 40px; cursor: pointer;
-            font-size: 0.85rem; letter-spacing: 2px;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            transition: all 0.5s ease; color: rgba(255, 255, 255, 0.4);
+        .song-btn {
+            background: transparent; border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 7px 18px; border-radius: 30px; cursor: pointer;
+            font-size: 0.8rem; transition: all 0.5s; letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
         }
+        .song-btn:hover { border-color: white; color: white; background: rgba(255,255,255,0.1); }
+        .song-btn.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent); }
 
-        .nav-item:hover { color: #fff; border-color: rgba(255, 255, 255, 0.5); background: rgba(255, 255, 255, 0.1); }
-        .nav-item.active { 
-            color: #fff; 
-            border-color: var(--theme-color); 
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 25px var(--glow-opacity);
-            transform: translateY(-5px);
+        /* 装饰元素 */
+        #footer-note {
+            position: absolute; bottom: 20px; left: 30px; font-size: 10px; 
+            opacity: 0.3; letter-spacing: 2px; z-index: 100;
         }
-
-        /* 装饰角标 */
-        .corner-mark { position: absolute; bottom: 20px; left: 30px; font-size: 10px; opacity: 0.25; letter-spacing: 3px; }
-        #scroll-hint { position: absolute; top: 30px; width: 100%; text-align: center; font-size: 9px; opacity: 0.2; letter-spacing: 5px; }
-
-        canvas { display: block; }
+        canvas { display: block; filter: contrast(1.1); }
     </style>
 </head>
 <body>
