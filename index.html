@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>如果五月天抱了你一下</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      max-width: 420px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    p {
+      line-height: 1.8;
+      font-size: 16px;
+      white-space: pre-line;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: #1f2933;
+      color: #e5e7eb;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button:hover {
+      background: #334155;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 13px;
+      opacity: 0.6;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>如果五月天抱了你一下</h1>
+    <p id="text">有些歌不是用来听的，
+是用来陪人的。</p>
+
+    <button onclick="showText('顽固')">顽固</button>
+    <button onclick="showText('人生海海')">人生海海</button>
+    <button onclick="showText('笑忘歌')">笑忘歌</button>
+    <button onclick="showText('一颗苹果')">一颗苹果</button>
+    <button onclick="showText('爱情的模样')">爱情的模样</button>
+    <button onclick="showText('垃圾车')">垃圾车</button>
+    <button onclick="showText('勇敢')">勇敢</button>
+
+    <div class="footer">五月天没有说你，但这首歌懂你。</div>
+  </div>
+
+<script>
+const texts = {
+  "顽固": "你不是不知道放弃比较轻松，\n你只是一直觉得，有些坚持如果现在丢了，\n以后会更对不起自己。\n\n你选这首歌，不是因为你多坚强，\n而是因为你已经走了很远。",
+  "人生海海": "人生不会一直顺风，\n但你还是愿意，一边受伤，一边往前。\n\n你选这首歌，\n是因为你已经学会：\n不解释，也能继续活得很好。",
+  "笑忘歌": "你不是不记得，\n只是终于懂得，\n有些回忆不用天天翻出来。\n\n你正在把过去，\n慢慢放回一个不再疼的位置。",
+  "一颗苹果": "就算世界只给你一颗苹果，\n你也还是想把它吃得很认真。\n\n你心里很清楚：\n自己并不是一无所有。",
+  "爱情的模样": "你不是在等完美的爱情，\n你只是希望相爱的时候，\n自己能是自在的。\n\n真正的喜欢，\n不会让人变小。",
+  "垃圾车": "你已经丢掉很多了。\n不合适的关系，\n还有不被理解的委屈。\n\n你正在腾出空间，\n留给更好的日子。",
+  "勇敢": "你不是每天都不害怕，\n你只是一次又一次，\n还是选择往前走。\n\n这样坚持着，\n就已经很勇敢了。"
+};
+
+function showText(song) {
+  document.getElementById("text").innerText = texts[song];
+}
+</script>
+</body>
+</html>
