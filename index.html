@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Mayday · 银河自传</title>
+    <title>Mayday · 给你的银河诗篇</title>
     <style>
         :root { 
             --accent: #ffffff; 
-            --glow: rgba(255,255,255,0.5); 
+            --glow-color: rgba(255, 255, 255, 0.6); 
         }
         
         html, body { 
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
             background-color: #000; 
-            /* 优先使用 Optima 配合 iOS 默认字体 */
             font-family: "Optima", "PingFang SC", "Avenir Next", sans-serif; 
             color: white; 
             user-select: none;
@@ -25,106 +24,101 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 2000; display: flex;
             flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1.2s ease; cursor: pointer;
+            transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
         }
-        #cover p { letter-spacing: 12px; font-weight: 200; opacity: 0.9; font-size: 1.3rem; margin: 0; }
-        #cover span { font-size: 10px; margin-top: 25px; opacity: 0.4; letter-spacing: 3px; border: 1px solid #fff; padding: 6px 16px; border-radius: 25px; }
+        #cover p { letter-spacing: 12px; font-weight: 200; opacity: 0.9; font-size: 1.4rem; }
+        #cover span { font-size: 10px; margin-top: 25px; opacity: 0.3; letter-spacing: 3px; border: 1px solid #fff; padding: 6px 18px; border-radius: 30px; }
 
-        /* 歌词区 - 氛围感核心 */
+        /* 歌词区 - 极致排版与光晕 */
         #lyrics-container {
             position: fixed; 
-            top: 42%; /* 针对手机屏幕比例，位置稍往上调，更具呼吸感 */
-            left: 50%;
+            top: 42%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%;
-            z-index: 100;
-            pointer-events: none;
-            padding: 0 30px;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: center;
+            width: 90%; 
+            min-height: 200px; /* 固定高度防止抖动 */
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; pointer-events: none;
         }
 
         #lyrics-text {
-            font-size: 1.8rem; 
+            font-size: 1.85rem; 
             font-weight: 300; 
-            letter-spacing: 4px; 
-            line-height: 1.6;
+            letter-spacing: 5px; 
+            line-height: 1.7;
             color: var(--accent);
             text-align: center;
-            /* 关键：智能平衡换行，防止末尾出现孤字 */
+            /* 核心排版：平衡换行 */
             text-wrap: balance; 
-            max-width: 90%;
-            /* 多层光晕叠加 */
+            white-space: pre-wrap;
+            /* 深度多层光晕 */
             text-shadow: 
-                0 0 10px var(--glow),
-                0 0 20px var(--glow),
-                0 0 40px var(--glow);
-            will-change: transform, opacity, filter;
+                0 0 8px var(--glow-color),
+                0 0 15px var(--glow-color),
+                0 0 30px var(--glow-color),
+                0 0 50px var(--glow-color);
+            
+            will-change: opacity, filter, transform;
             transition: 
-                opacity 0.6s cubic-bezier(0.33, 1, 0.68, 1),
-                transform 0.7s cubic-bezier(0.33, 1, 0.68, 1),
-                filter 0.7s ease;
-            margin: 0;
+                opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+                filter 1s ease;
         }
 
-        /* 消散动效 */
-        .lyric-state-change { 
+        /* 慢节奏消散动画 */
+        .lyric-hidden { 
             opacity: 0 !important; 
-            transform: scale(0.94) translateY(10px) !important; 
-            filter: blur(15px) brightness(2) !important;
-            letter-spacing: 12px !important; /* 散开感 */
+            transform: scale(0.92) translateY(15px) !important; 
+            filter: blur(20px) brightness(1.5) !important;
         }
 
-        /* 底部导航适配 */
+        /* 底部导航 - iPhone 12 安全区适配 */
         #song-menu {
             position: fixed; 
-            bottom: calc(60px + env(safe-area-inset-bottom)); 
+            bottom: calc(65px + env(safe-area-inset-bottom)); 
             left: 0; width: 100%; 
             display: flex; justify-content: center; align-items: center;
             gap: 12px; flex-wrap: wrap; z-index: 1000;
-            padding: 0 20px; box-sizing: border-box;
+            padding: 0 25px; box-sizing: border-box;
         }
 
         .song-btn {
-            background: rgba(255,255,255,0.06); 
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 10px 18px; border-radius: 25px; cursor: pointer;
+            background: rgba(255,255,255,0.04); 
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 10px 16px; border-radius: 25px; cursor: pointer;
             font-size: 0.8rem; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            color: rgba(255,255,255,0.5); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255,255,255,0.4); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             -webkit-tap-highlight-color: transparent;
             letter-spacing: 1px;
         }
 
         .song-btn.active { 
             border-color: var(--accent); color: white; 
-            box-shadow: 0 0 15px var(--glow);
-            background: rgba(255,255,255,0.15);
-            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--glow-color);
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-3px);
         }
 
         #footer-note {
             position: fixed; bottom: calc(15px + env(safe-area-inset-bottom)); 
             left: 0; width: 100%; text-align: center;
-            font-size: 9px; opacity: 0.2; letter-spacing: 2px; z-index: 100;
+            font-size: 9px; opacity: 0.2; letter-spacing: 2px;
         }
-        canvas { display: block; touch-action: none; }
+        canvas { display: block; }
     </style>
 </head>
 <body>
 
     <div id="cover" onclick="startApp()">
         <p>如果五月天懂你</p>
-        <span>开启银河旅程</span>
+        <span>点击开启银河旅程</span>
     </div>
 
     <div id="footer-note">致：那个喜欢五月天的你</div>
 
     <div id="lyrics-container">
-        <div id="lyrics-text">每一个 渺小的 理由 都能成为 顽固的 借口</div>
+        <div id="lyrics-text">在那座 倔强的 城市里</div>
     </div>
 
     <div id="song-menu"></div>
@@ -150,23 +144,23 @@
         let currentIndices = {};
         Object.keys(config).forEach(k => currentIndices[k] = 0);
 
-        // --- 核心：创建柔和圆形贴图 (解决方块感) ---
-        function createCircleTexture() {
+        // --- 创建显著的发光粒子贴图 ---
+        function createBrightStarTexture() {
             const canvas = document.createElement('canvas');
-            canvas.width = 64; canvas.height = 64;
+            canvas.width = 128; canvas.height = 128;
             const ctx = canvas.getContext('2d');
-            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
             gradient.addColorStop(0, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.3, 'rgba(255,255,255,0.6)');
-            gradient.addColorStop(0.6, 'rgba(255,255,255,0.1)');
+            gradient.addColorStop(0.1, 'rgba(255,255,255,0.9)');
+            gradient.addColorStop(0.4, 'rgba(255,255,255,0.2)');
             gradient.addColorStop(1, 'rgba(255,255,255,0)');
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 64, 64);
+            ctx.fillRect(0, 0, 128, 128);
             return new THREE.CanvasTexture(canvas);
         }
 
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2500);
         camera.position.z = 1000;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -174,23 +168,34 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        const particleCount = 5000;
+        // 增加随机大小以增强层次感
+        const particleCount = 4500;
         const geo = new THREE.BufferGeometry();
         const posArray = new Float32Array(particleCount * 3);
+        const sizes = new Float32Array(particleCount);
         const basePos = new Float32Array(particleCount * 3);
 
-        for(let i=0; i<particleCount * 3; i++) {
-            const p = (Math.random() - 0.5) * 1800;
-            posArray[i] = p; basePos[i] = p;
+        for(let i=0; i<particleCount; i++) {
+            const i3 = i * 3;
+            posArray[i3] = (Math.random() - 0.5) * 1800;
+            posArray[i3+1] = (Math.random() - 0.5) * 1800;
+            posArray[i3+2] = (Math.random() - 0.5) * 1800;
+            basePos[i3] = posArray[i3];
+            basePos[i3+1] = posArray[i3+1];
+            basePos[i3+2] = posArray[i3+2];
+            // 随机大小：让一部分星星更大更显眼
+            sizes[i] = Math.random() < 0.1 ? 15.0 : 7.0;
         }
         geo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
         const mat = new THREE.PointsMaterial({
-            size: 6, // 配合圆形贴图适当增大
-            map: createCircleTexture(),
-            transparent: true, opacity: 0.8,
+            size: 10,
+            map: createBrightStarTexture(),
+            transparent: true, opacity: 0.9,
             blending: THREE.AdditiveBlending,
             depthWrite: false,
+            sizeAttenuation: true
         });
 
         const particles = new THREE.Points(geo, mat);
@@ -198,10 +203,10 @@
 
         window.startApp = () => {
             document.getElementById('cover').style.opacity = '0';
-            setTimeout(() => { document.getElementById('cover').style.display = 'none'; }, 1200);
+            setTimeout(() => { document.getElementById('cover').style.display = 'none'; }, 2000);
         };
 
-        // --- 切换主题逻辑 ---
+        // --- 优化的歌词慢节奏切换 ---
         function changeTheme(name, event) {
             currentSong = name;
             const data = config[name];
@@ -215,27 +220,30 @@
             }
 
             const el = document.getElementById('lyrics-text');
-            el.classList.add('lyric-state-change');
+            // 1. 开始消散
+            el.classList.add('lyric-hidden');
             
-            // 300ms 是视觉消散的最佳替换点
+            // 2. 600ms 后更换文字 (处于全透明模糊状态)
             setTimeout(() => {
                 const idx = currentIndices[name];
                 el.innerText = data.lyrics[idx];
                 currentIndices[name] = (idx + 1) % data.lyrics.length;
                 
+                // 色彩动态适配
                 const color = data.color;
                 document.documentElement.style.setProperty('--accent', color);
-                document.documentElement.style.setProperty('--glow', color + "99");
+                document.documentElement.style.setProperty('--glow-color', color + "99");
                 
-                el.classList.remove('lyric-state-change');
+                // 3. 开始浮现
+                el.classList.remove('lyric-hidden');
                 mat.color.set(color);
-            }, 300); 
+            }, 600); 
         }
 
         const menu = document.getElementById('song-menu');
         Object.keys(config).forEach(name => {
             const btn = document.createElement('div');
-            btn.className = 'nav-item song-btn';
+            btn.className = 'song-btn';
             btn.innerText = name;
             btn.addEventListener('click', (e) => changeTheme(name, e));
             menu.appendChild(btn);
@@ -252,21 +260,19 @@
                 if(mode === "wave") { 
                     pos[i3+1] = basePos[i3+1] + Math.sin(time + basePos[i3]*0.01) * 50;
                 } else if(mode === "pulse") { 
-                    const s = 1 + Math.sin(time * 3) * 0.1;
+                    const s = 1 + Math.sin(time * 2.5) * 0.1;
                     pos[i3] = basePos[i3] * s; pos[i3+1] = basePos[i3+1] * s;
                 } else if(mode === "float") { 
-                    pos[i3+1] += 1.5;
-                    if(pos[i3+1] > 1000) pos[i3+1] = -1000;
+                    pos[i3+1] += 1.2; if(pos[i3+1] > 1000) pos[i3+1] = -1000;
                 } else if(mode === "vortex") { 
                     const x = pos[i3], z = pos[i3+2];
-                    const angle = 0.015;
+                    const angle = 0.012;
                     pos[i3] = x * Math.cos(angle) - z * Math.sin(angle);
                     pos[i3+2] = x * Math.sin(angle) + z * Math.cos(angle);
                 } else if(mode === "jump") { 
-                    pos[i3+1] = basePos[i3+1] + Math.abs(Math.sin(time*5 + i)) * 30;
+                    pos[i3+1] = basePos[i3+1] + Math.abs(Math.sin(time*4 + i)) * 30;
                 } else if(mode === "dash") { 
-                    pos[i3] += 25;
-                    if(pos[i3] > 1000) pos[i3] = -1000;
+                    pos[i3] += 20; if(pos[i3] > 1000) pos[i3] = -1000;
                 } else { 
                     pos[i3] = basePos[i3] + Math.sin(time + i) * 15;
                     pos[i3+1] = basePos[i3+1] + Math.cos(time + i) * 15;
