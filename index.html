@@ -1,86 +1,110 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>如果五月天抱了你一下</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .card {
-      max-width: 420px;
-      width: 100%;
-    }
-    h1 {
-      font-size: 22px;
-      margin-bottom: 12px;
-    }
-    p {
-      line-height: 1.8;
-      font-size: 16px;
-      white-space: pre-line;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      background: #1f2933;
-      color: #e5e7eb;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-    button:hover {
-      background: #334155;
-    }
-    .footer {
-      margin-top: 20px;
-      font-size: 13px;
-      opacity: 0.6;
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>如果五月天抱了你一下</title>
+
+<style>
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #020617, #0f172a);
+  color: #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  min-height: 100vh;
+}
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 40px 20px;
+}
+h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.subtitle {
+  opacity: 0.7;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+.song {
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+}
+.song:hover {
+  background: rgba(255,255,255,0.1);
+}
+.lyric {
+  margin-top: 30px;
+  white-space: pre-line;
+  line-height: 1.8;
+  font-size: 16px;
+  min-height: 120px;
+}
+.footer {
+  margin-top: 40px;
+  font-size: 13px;
+  opacity: 0.5;
+  text-align: center;
+}
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>如果五月天抱了你一下</h1>
-    <p id="text">有些歌不是用来听的，
-是用来陪人的。</p>
+<div class="container">
+  <h1>如果五月天抱了你一下</h1>
+  <div class="subtitle">选一首歌，让它陪你一会儿</div>
 
-    <button onclick="showText('顽固')">顽固</button>
-    <button onclick="showText('人生海海')">人生海海</button>
-    <button onclick="showText('笑忘歌')">笑忘歌</button>
-    <button onclick="showText('一颗苹果')">一颗苹果</button>
-    <button onclick="showText('爱情的模样')">爱情的模样</button>
-    <button onclick="showText('垃圾车')">垃圾车</button>
-    <button onclick="showText('勇敢')">勇敢</button>
+  <div class="song" onclick="playSong('顽固')">🎧 顽固</div>
+  <div class="song" onclick="playSong('人生海海')">🎧 人生海海</div>
+  <div class="song" onclick="playSong('笑忘歌')">🎧 笑忘歌</div>
+  <div class="song" onclick="playSong('一颗苹果')">🎧 一颗苹果</div>
+  <div class="song" onclick="playSong('爱情的模样')">🎧 爱情的模样</div>
+  <div class="song" onclick="playSong('垃圾车')">🎧 垃圾车</div>
+  <div class="song" onclick="playSong('勇敢')">🎧 勇敢</div>
 
-    <div class="footer">五月天没有说你，但这首歌懂你。</div>
+  <div id="lyric" class="lyric"></div>
+
+  <div class="footer">
+    五月天没有写你的名字<br>
+    但这首歌懂你
   </div>
+</div>
+
+<audio id="bgm" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5f5c2c5d62.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 const texts = {
-  "顽固": "你不是不知道放弃比较轻松，\n你只是一直觉得，有些坚持如果现在丢了，\n以后会更对不起自己。\n\n你选这首歌，不是因为你多坚强，\n而是因为你已经走了很远。",
-  "人生海海": "人生不会一直顺风，\n但你还是愿意，一边受伤，一边往前。\n\n你选这首歌，\n是因为你已经学会：\n不解释，也能继续活得很好。",
-  "笑忘歌": "你不是不记得，\n只是终于懂得，\n有些回忆不用天天翻出来。\n\n你正在把过去，\n慢慢放回一个不再疼的位置。",
-  "一颗苹果": "就算世界只给你一颗苹果，\n你也还是想把它吃得很认真。\n\n你心里很清楚：\n自己并不是一无所有。",
-  "爱情的模样": "你不是在等完美的爱情，\n你只是希望相爱的时候，\n自己能是自在的。\n\n真正的喜欢，\n不会让人变小。",
-  "垃圾车": "你已经丢掉很多了。\n不合适的关系，\n还有不被理解的委屈。\n\n你正在腾出空间，\n留给更好的日子。",
-  "勇敢": "你不是每天都不害怕，\n你只是一次又一次，\n还是选择往前走。\n\n这样坚持着，\n就已经很勇敢了。"
+  "顽固": "你不是不知道放弃比较轻松。\n只是你不想对不起走到今天的自己。",
+  "人生海海": "人生不会一直顺风。\n但你已经学会，在风浪里站稳。",
+  "笑忘歌": "有些回忆不需要天天想起。\n你已经把它们，放在了不会疼的位置。",
+  "一颗苹果": "就算世界只给你一颗苹果。\n你也还是想，好好地吃完它。",
+  "爱情的模样": "你想要的爱情，是自在。\n不是委屈自己，换来的陪伴。",
+  "垃圾车": "你已经丢掉很多了。\n现在的你，在给未来腾位置。",
+  "勇敢": "你不是不害怕。\n你只是依然选择往前走。"
 };
 
-function showText(song) {
-  document.getElementById("text").innerText = texts[song];
+function playSong(name) {
+  const audio = document.getElementById("bgm");
+  audio.play();
+  typeText(texts[name]);
+}
+
+function typeText(text) {
+  const el = document.getElementById("lyric");
+  el.innerText = "";
+  let i = 0;
+  const timer = setInterval(() => {
+    el.innerText += text[i];
+    i++;
+    if (i >= text.length) clearInterval(timer);
+  }, 40);
 }
 </script>
+
 </body>
 </html>
