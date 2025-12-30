@@ -163,20 +163,6 @@
         const starField = new THREE.Points(starGeo, starMat);
         scene.add(starField);
 
-        // 星云片层 (增加震撼感的深度)
-        const nebulaGeo = new THREE.PlaneGeometry(1000, 1000);
-        const nebulaMat = new THREE.MeshBasicMaterial({
-            color: 0x112244, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide
-        });
-        const nebulaGroup = new THREE.Group();
-        for(let i=0; i<5; i++) {
-            const m = new THREE.Mesh(nebulaGeo, nebulaMat);
-            m.position.set((Math.random()-0.5)*500, (Math.random()-0.5)*500, (Math.random()-0.5)*1000);
-            m.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
-            nebulaGroup.add(m);
-        }
-        scene.add(nebulaGroup);
-
         // --- 4. 交互逻辑 ---
         let targetZoom = 1000;
         window.startApp = () => {
