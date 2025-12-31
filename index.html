@@ -26,7 +26,7 @@
             width: 85%; text-align: center; z-index: 100; pointer-events: none;
         }
         #lyrics-text {
-            font-size: 1.8rem; font-weight: 300; letter-spacing: 6px; line-height: 1.8;
+            font-size: 1.9rem; font-weight: 300; letter-spacing: 6px; line-height: 1.8;
             color: var(--accent); text-wrap: balance; 
             text-shadow: 0 0 15px var(--glow), 0 0 30px var(--glow);
             transition: opacity 1.2s, transform 1.5s, filter 1.2s;
@@ -47,7 +47,7 @@
         .song-btn.active { border-color: var(--accent); color: white; box-shadow: 0 0 20px var(--glow); background: rgba(255,255,255,0.1); transform: translateY(-5px); }
 
         #footer-note { position: fixed; bottom: calc(15px + env(safe-area-inset-bottom)); left: 0; width: 100%; text-align: center; font-size: 9px; opacity: 0.2; letter-spacing: 2px; }
-        canvas { display: block; background: radial-gradient(circle at center, #0a111a 0%, #000 100%); }
+        canvas { display: block; background: radial-gradient(circle at center, #0a0a1a 0%, #000 100%); }
     </style>
 </head>
 <body>
@@ -73,9 +73,9 @@
             "顽固": { color: "#FFD700", mode: "pulse", lyrics: ["有什么是你永远不放弃", "一次一次你<br>吞下了泪滴", "一次一次<br>拼回破碎自己", "你当时相信<br>的那些事情", "会在如今<br>变成美丽风景", "走过的 叫足迹<br>走不到 叫憧憬", "每当我迟疑<br>从不曾忘记", "活在我心深处<br>那顽固的自己", "谢谢你<br>一路陪我到这里"] },
             "人生海海": { color: "#4EA1FF", mode: "wave", lyrics: ["就算是整个世界<br>把我抛弃", "而至少快乐伤心我自己决定", "我知道潮落之后一定有潮起", "有什么了不起"] },
             "笑忘歌": { color: "#FFB6C1", mode: "float", lyrics: ["这一生志愿只要平凡快乐", "谁说这样不伟大呢", "有多少错误重蹈覆辙", "有多少苦痛还不是都过来了", "想起来甚至还会笑呢", "伤心的都忘记了", "只记得这首笑忘歌"] },
-            "一颗苹果": { color: "#FF4500", mode: "vortex", lyrics: ["经过漫长的等候<br>梦想是梦想<br>我还是一个我", "时间如果可以倒流", "我想我还是会<br>卯起来蹉跎", "反正就这样吧我知道我努力过", "活着不多不少<br>幸福刚好够用", "活着其实很好<br>再吃一颗苹果"] },
+             "一颗苹果": { color: "#FF4500", mode: "vortex", lyrics: ["经过漫长的等候<br>梦想是梦想<br>我还是一个我", "时间如果可以倒流", "我想我还是会<br>卯起来蹉跎", "反正就这样吧我知道我努力过", "活着不多不少<br>幸福刚好够用", "活着其实很好<br>再吃一颗苹果"] },
             "爱情的模样": { color: "#B19CD9", mode: "expand", lyrics: ["你是巨大的海洋", "我是雨下在你身上", "你是谁 教我狂恋", "教我勇敢地挑战全世界", "我爱谁 已无所谓", "没有谁能将爱情划界限"] },
-            "垃圾车": { color: "#F0E68C", mode: "jump", lyrics: ["有你<br>我才不会孤单", "有你的陪伴<br>我才有靠山", "你若不爽<br>我是你的垃圾车", "每天<br>听你的心声"] },
+             "垃圾车": { color: "#F0E68C", mode: "jump", lyrics: ["有你<br>我才不会孤单", "有你的陪伴<br>我才有靠山", "你若不爽<br>我是你的垃圾车", "每天<br>听你的心声"] },
             "勇敢": { color: "#20B2AA", mode: "dash", lyrics: ["等一天<br>黑暗过去<br>苦尽甘来", "人生滋味才了解", "为了那个将来", "要自己<br>勇敢再勇敢"] }
         };
 
@@ -106,7 +106,7 @@
 
         const circleTex = createTexture();
 
-        // 1. 背景静谧星辰
+        // 1. 背景静谧星辰 (10,000颗)
         const bgGeo = new THREE.BufferGeometry();
         const bgPos = new Float32Array(10000 * 3);
         const bgOrig = new Float32Array(10000 * 3);
@@ -119,7 +119,7 @@
         const bgStars = new THREE.Points(bgGeo, bgMat);
         scene.add(bgStars);
 
-        // 2. 主题核心粒子
+        // 2. 主题核心粒子 (40,000颗)
         const mainCount = 40000;
         const mainGeo = new THREE.BufferGeometry();
         const mainPos = new Float32Array(mainCount * 3);
@@ -141,14 +141,11 @@
         const mainParticles = new THREE.Points(mainGeo, mainMat);
         scene.add(mainParticles);
 
-        // --- 逻辑交互 ---
+        // --- 逻辑与交互 ---
         let targetZoom = 1000;
         window.startApp = () => {
             document.getElementById('cover').style.opacity = '0';
-            setTimeout(() => { 
-                document.getElementById('cover').style.display = 'none'; 
-                changeTheme("顽固"); 
-            }, 1500);
+            setTimeout(() => { document.getElementById('cover').style.display = 'none'; changeTheme("顽固"); }, 1500);
         };
 
         function changeTheme(name, event) {
@@ -161,8 +158,7 @@
             const el = document.getElementById('lyrics-text');
             el.classList.add('lyric-state-change');
             setTimeout(() => {
-                // 使用 innerHTML 以解析 <br>
-                el.innerHTML = data.lyrics[currentIndices[name]];
+                el.innerText = data.lyrics[currentIndices[name]];
                 currentIndices[name] = (currentIndices[name] + 1) % data.lyrics.length;
                 document.documentElement.style.setProperty('--accent', data.color);
                 document.documentElement.style.setProperty('--glow', data.color + "88");
@@ -179,78 +175,93 @@
             menu.appendChild(btn);
         });
 
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = Date.now() * 0.001;
-            const mode = config[currentSong].mode;
-            
-            const bP = bgStars.geometry.attributes.position.array;
-            const mP = mainParticles.geometry.attributes.position.array;
+// --- 在 animate 函数中找到对应的 dash 逻辑进行替换 ---
 
-            // 1. 背景星辰
-            for(let i=0; i<10000; i++) {
-                const i3 = i * 3;
-                if(mode === "dash") { 
-                    bP[i3] += 1.5; 
-                    bP[i3+1] = bgOrig[i3+1] + Math.sin(time + bgOrig[i3]*0.01) * 10;
-                    if(bP[i3] > 1500) bP[i3] = -1500;
-                } else if(mode === "wave") {
-                    bP[i3+1] = bgOrig[i3+1] + Math.sin(time + bgOrig[i3]*0.01) * 40;
-                } else {
-                    bP[i3+1] = bgOrig[i3+1] + Math.sin(time*0.5 + i)*5;
-                    bP[i3] = bgOrig[i3];
-                }
-            }
-            bgStars.geometry.attributes.position.needsUpdate = true;
+function animate() {
+    requestAnimationFrame(animate);
+    const time = Date.now() * 0.001;
+    const mode = config[currentSong].mode;
+    
+    const bP = bgStars.geometry.attributes.position.array;
+    const mP = mainParticles.geometry.attributes.position.array;
 
-            // 2. 主题粒子
-            for(let i=0; i<mainCount; i++) {
-                const i3 = i * 3;
-                const ox = mainBase[i3], oy = mainBase[i3+1], oz = mainBase[i3+2];
-                
-                switch(mode) {
-                    case "dash": 
-                        mP[i3] += 6; 
-                        mP[i3+1] = oy + Math.sin(time * 2 + ox * 0.002) * 30; 
-                        mP[i3+2] = oz;
-                        if(mP[i3] > 1200) mP[i3] = -1200;
-                        break;
-                    case "pulse": 
-                        const s = 1 + Math.sin(time * 3 + ox*0.002) * 0.12;
-                        mP[i3] = ox * s; mP[i3+1] = oy * s; mP[i3+2] = oz * s;
-                        break;
-                    case "wave":
-                        mP[i3+1] = oy + Math.sin(time * 2 + ox * 0.005) * 70;
-                        mP[i3] = ox + Math.cos(time * 1.5 + oy * 0.005) * 30;
-                        break;
-                    case "float":
-                        mP[i3+1] += 2.5;
-                        mP[i3] = ox + Math.sin(time * 2 + oy * 0.01) * 20;
-                        if(mP[i3+1] > 1000) mP[i3+1] = -1000;
-                        break;
-                    case "vortex":
-                        const c = Math.cos(0.02), s_v = Math.sin(0.02);
-                        const vx = mP[i3], vz = mP[i3+2];
-                        mP[i3] = vx * c - vz * s_v;
-                        mP[i3+2] = vx * s_v + vz * c;
-                        break;
-                    case "expand":
-                        const se = 1.2 + Math.sin(time * 0.8) * 0.3;
-                        mP[i3] = ox * se + Math.sin(time+i)*10;
-                        mP[i3+1] = oy * se + Math.cos(time+i)*10;
-                        break;
-                    case "jump":
-                        mP[i3+1] = oy + Math.abs(Math.sin(time * 5 + ox/500)) * 60;
-                        break;
-                }
-            }
-            mainParticles.geometry.attributes.position.needsUpdate = true;
-            mainParticles.rotation.y += (mode === "dash" ? 0.0002 : 0.001);
-
-            camera.position.z += (targetZoom - camera.position.z) * 0.05;
-            camera.lookAt(0,0,0);
-            renderer.render(scene, camera);
+    // 1. 背景星辰律动
+    for(let i=0; i<10000; i++) {
+        const i3 = i * 3;
+        if(mode === "dash") { 
+            // 勇敢：背景星辰轻微横移
+            bP[i3] += 1.5; // 向右缓动
+            bP[i3+1] = bgOrig[i3+1] + Math.sin(time + bgOrig[i3]*0.01) * 10; // 微小波动
+            if(bP[i3] > 1500) bP[i3] = -1500;
+        } else if(mode === "wave") {
+            bP[i3+1] = bgOrig[i3+1] + Math.sin(time + bgOrig[i3]*0.01) * 40;
+        } else {
+            bP[i3+1] = bgOrig[i3+1] + Math.sin(time*0.5 + i)*5;
+            bP[i3] = bgOrig[i3]; // 重置X轴防止其他模式累积位移
         }
+    }
+    bgStars.geometry.attributes.position.needsUpdate = true;
+
+    // 2. 主题粒子律动
+    for(let i=0; i<mainCount; i++) {
+        const i3 = i * 3;
+        const ox = mainBase[i3], oy = mainBase[i3+1], oz = mainBase[i3+2];
+        
+        switch(mode) {
+            case "dash": // 勇敢：丝滑的风之律动
+                // 核心逻辑：横向主位移 + Y轴正弦波 = 风的流动
+                mP[i3] += 6; // 适中的流速
+                mP[i3+1] = oy + Math.sin(time * 2 + ox * 0.002) * 30; // 柔和的上下起伏
+                mP[i3+2] = oz; // 保持Z轴不动，消除“扑面而来”感
+                
+                // 循环边界处理
+                if(mP[i3] > 1200) {
+                    mP[i3] = -1200;
+                }
+                break;
+                
+            case "pulse": // 顽固
+                const s = 1 + Math.sin(time * 3 + ox*0.002) * 0.12;
+                mP[i3] = ox * s; mP[i3+1] = oy * s; mP[i3+2] = oz * s;
+                break;
+            case "wave": // 人生海海
+                mP[i3+1] = oy + Math.sin(time * 2 + ox * 0.005) * 70;
+                mP[i3] = ox + Math.cos(time * 1.5 + oy * 0.005) * 30;
+                break;
+            case "float": // 笑忘歌
+                mP[i3+1] += 2.5;
+                mP[i3] = ox + Math.sin(time * 2 + oy * 0.01) * 20;
+                if(mP[i3+1] > 1000) mP[i3+1] = -1000;
+                break;
+            case "vortex": // 一颗苹果
+                const c = Math.cos(0.02), s_v = Math.sin(0.02);
+                const vx = mP[i3], vz = mP[i3+2];
+                mP[i3] = vx * c - vz * s_v;
+                mP[i3+2] = vx * s_v + vz * c;
+                break;
+            case "expand": // 爱情的模样
+                const se = 1.2 + Math.sin(time * 0.8) * 0.3;
+                mP[i3] = ox * se + Math.sin(time+i)*10;
+                mP[i3+1] = oy * se + Math.cos(time+i)*10;
+                break;
+            case "jump": // 垃圾车
+                mP[i3+1] = oy + Math.abs(Math.sin(time * 5 + ox/500)) * 60;
+                break;
+        }
+    }
+    mainParticles.geometry.attributes.position.needsUpdate = true;
+    
+    // 在 dash 模式下减慢自转速度，增加稳定感
+    if(mode === "dash") {
+        mainParticles.rotation.y += 0.0002;
+    } else {
+        mainParticles.rotation.y += 0.001;
+    }
+
+    camera.position.z += (targetZoom - camera.position.z) * 0.05;
+    camera.lookAt(0,0,0);
+    renderer.render(scene, camera);
+}
 
         animate();
         window.addEventListener('resize', () => {
@@ -258,9 +269,7 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-        window.addEventListener('wheel', (e) => { 
-            targetZoom = THREE.MathUtils.clamp(targetZoom + e.deltaY * 0.5, 400, 1600); 
-        });
+        window.addEventListener('wheel', (e) => { targetZoom = THREE.MathUtils.clamp(targetZoom + e.deltaY * 0.5, 400, 1600); });
     </script>
 </body>
 </html>
