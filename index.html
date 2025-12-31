@@ -70,13 +70,13 @@
 
         // --- 配置与律动模式映射 ---
         const config = {
-            "顽固": { color: "#FFD700", mode: "pulse", lyrics: ["谢谢你一路陪我到这里", "心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
-            "人生海海": { color: "#4EA1FF", mode: "wave", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "明天我依然装作 快乐且洒脱", "那是我的骄傲 太阳在等我"] },
+            "顽固": { color: "#FFD700", mode: "pulse", lyrics: ["你当时相信 的那些事情 会在如今 变成美丽风景", "一次一次你 吞下了泪滴 一次一次 拼回破碎自己","心中的那个自己 还没忘记", "用全力去追那个梦的顽固", "你是不迟疑的箭 逆着风飞去"] },
+            "人生海海": { color: "#4EA1FF", mode: "wave", lyrics: ["无论是哪一种人生 哪怕再痛", "潮落之后一定有潮起 有什么了不起", "无论是我的明天 要去哪里", "而至少快乐伤心我自己决定"] },
             "笑忘歌": { color: "#FFB6C1", mode: "float", lyrics: ["这一生志愿只要平凡快乐", "谁说这样不伟大呢", "手牵手 一起唱 永远都记得", "天真的笑脸 依旧在开放"] },
-            "一颗苹果": { color: "#FF4500", mode: "vortex", lyrics: ["时间如果我们不珍惜 就会走得很快", "活着其实很好 再吃一颗苹果", "总要有一首我的歌 哪怕没人合", "大概是 只要我现在 觉得快乐"] },
-            "爱情的模样": { color: "#B19CD9", mode: "expand", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是爱情的模样 晴天或阴天", "在你的身上 找到我遗失的翅膀"] },
-            "垃圾车": { color: "#F0E68C", mode: "jump", lyrics: ["有你 我才没那么孤单", "你是我的垃圾车 每天为你唱歌", "虽然你偶尔会 乱发脾气", "但你是我 永远的好兄弟"] },
-            "勇敢": { color: "#20B2AA", mode: "dash", lyrics: ["风若吹 乱我的头发 也不惊惶", "我知道 终会有一个未来", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
+            "一颗苹果": { color: "#FF4500", mode: "vortex", lyrics: ["经过漫长的等候 梦想是梦想 我还是一个我", "活着其实很好 再吃一颗苹果", "时间如果可以倒流", "我想我还是会 卯起来蹉跎"] },
+            "爱情的模样": { color: "#B19CD9", mode: "expand", lyrics: ["你是巨大的海洋 我是雨下在你身上", "我愿在你手掌 像一个温柔的海洋", "你是谁 教我狂恋", "教我勇敢地挑战全世界"] },
+            "垃圾车": { color: "#F0E68C", mode: "jump", lyrics: ["有你 我才没那么孤单", " 有你的陪伴 我才有靠山", "你若欢喜 我是你的垃圾车 ", "每天 听你的心声"] },
+            "勇敢": { color: "#20B2AA", mode: "dash", lyrics: ["等一天 黑暗过去 苦尽甘来", "人生滋味才了解", "等到太阳出来 看到希望", "哪怕路再长 也要勇敢去闯"] }
         };
 
         let currentSong = "顽固";
@@ -175,74 +175,93 @@
             menu.appendChild(btn);
         });
 
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = Date.now() * 0.001;
-            const mode = config[currentSong].mode;
-            
-            const bP = bgStars.geometry.attributes.position.array;
-            const mP = mainParticles.geometry.attributes.position.array;
+// --- 在 animate 函数中找到对应的 dash 逻辑进行替换 ---
 
-            // 1. 背景星辰律动 (根据模式变换)
-            for(let i=0; i<10000; i++) {
-                const i3 = i * 3;
-                if(mode === "wave") { // 人生海海：波浪
-                    bP[i3+1] = bgOrig[i3+1] + Math.sin(time + bgOrig[i3]*0.01) * 40;
-                } else if(mode === "dash") { // 勇敢：穿梭
-                    bP[i3+2] += 12;
-                    if(bP[i3+2] > 1200) bP[i3+2] = -1200;
-                } else {
-                    bP[i3+1] = bgOrig[i3+1] + Math.sin(time*0.5 + i)*5;
-                }
-            }
-            bgStars.geometry.attributes.position.needsUpdate = true;
+function animate() {
+    requestAnimationFrame(animate);
+    const time = Date.now() * 0.001;
+    const mode = config[currentSong].mode;
+    
+    const bP = bgStars.geometry.attributes.position.array;
+    const mP = mainParticles.geometry.attributes.position.array;
 
-            // 2. 主题粒子律动 (核心模式)
-            for(let i=0; i<mainCount; i++) {
-                const i3 = i * 3;
-                const ox = mainBase[i3], oy = mainBase[i3+1], oz = mainBase[i3+2];
-                
-                switch(mode) {
-                    case "pulse": // 顽固：呼吸心跳
-                        const s = 1 + Math.sin(time * 3 + ox*0.002) * 0.12;
-                        mP[i3] = ox * s; mP[i3+1] = oy * s; mP[i3+2] = oz * s;
-                        break;
-                    case "wave": // 人生海海：巨浪
-                        mP[i3+1] = oy + Math.sin(time * 2 + ox * 0.005) * 70;
-                        mP[i3] = ox + Math.cos(time * 1.5 + oy * 0.005) * 30;
-                        break;
-                    case "float": // 笑忘歌：冉冉升起
-                        mP[i3+1] += 2.5;
-                        mP[i3] = ox + Math.sin(time * 2 + oy * 0.01) * 20;
-                        if(mP[i3+1] > 1000) mP[i3+1] = -1000;
-                        break;
-                    case "vortex": // 一颗苹果：星际漩涡
-                        const c = Math.cos(0.02), s_v = Math.sin(0.02);
-                        const vx = mP[i3], vz = mP[i3+2];
-                        mP[i3] = vx * c - vz * s_v;
-                        mP[i3+2] = vx * s_v + vz * c;
-                        break;
-                    case "expand": // 爱情的模样：弥漫扩张
-                        const se = 1.2 + Math.sin(time * 0.8) * 0.3;
-                        mP[i3] = ox * se + Math.sin(time+i)*10;
-                        mP[i3+1] = oy * se + Math.cos(time+i)*10;
-                        break;
-                    case "jump": // 垃圾车：同步律动
-                        mP[i3+1] = oy + Math.abs(Math.sin(time * 5 + ox/500)) * 60;
-                        break;
-                    case "dash": // 勇敢：光速推进
-                        mP[i3+2] += 40;
-                        if(mP[i3+2] > 1000) mP[i3+2] = -2000;
-                        break;
-                }
-            }
-            mainParticles.geometry.attributes.position.needsUpdate = true;
-            mainParticles.rotation.y += 0.001;
-
-            camera.position.z += (targetZoom - camera.position.z) * 0.05;
-            camera.lookAt(0,0,0);
-            renderer.render(scene, camera);
+    // 1. 背景星辰律动
+    for(let i=0; i<10000; i++) {
+        const i3 = i * 3;
+        if(mode === "dash") { 
+            // 勇敢：背景星辰轻微横移
+            bP[i3] += 1.5; // 向右缓动
+            bP[i3+1] = bgOrig[i3+1] + Math.sin(time + bgOrig[i3]*0.01) * 10; // 微小波动
+            if(bP[i3] > 1500) bP[i3] = -1500;
+        } else if(mode === "wave") {
+            bP[i3+1] = bgOrig[i3+1] + Math.sin(time + bgOrig[i3]*0.01) * 40;
+        } else {
+            bP[i3+1] = bgOrig[i3+1] + Math.sin(time*0.5 + i)*5;
+            bP[i3] = bgOrig[i3]; // 重置X轴防止其他模式累积位移
         }
+    }
+    bgStars.geometry.attributes.position.needsUpdate = true;
+
+    // 2. 主题粒子律动
+    for(let i=0; i<mainCount; i++) {
+        const i3 = i * 3;
+        const ox = mainBase[i3], oy = mainBase[i3+1], oz = mainBase[i3+2];
+        
+        switch(mode) {
+            case "dash": // 勇敢：丝滑的风之律动
+                // 核心逻辑：横向主位移 + Y轴正弦波 = 风的流动
+                mP[i3] += 6; // 适中的流速
+                mP[i3+1] = oy + Math.sin(time * 2 + ox * 0.002) * 30; // 柔和的上下起伏
+                mP[i3+2] = oz; // 保持Z轴不动，消除“扑面而来”感
+                
+                // 循环边界处理
+                if(mP[i3] > 1200) {
+                    mP[i3] = -1200;
+                }
+                break;
+                
+            case "pulse": // 顽固
+                const s = 1 + Math.sin(time * 3 + ox*0.002) * 0.12;
+                mP[i3] = ox * s; mP[i3+1] = oy * s; mP[i3+2] = oz * s;
+                break;
+            case "wave": // 人生海海
+                mP[i3+1] = oy + Math.sin(time * 2 + ox * 0.005) * 70;
+                mP[i3] = ox + Math.cos(time * 1.5 + oy * 0.005) * 30;
+                break;
+            case "float": // 笑忘歌
+                mP[i3+1] += 2.5;
+                mP[i3] = ox + Math.sin(time * 2 + oy * 0.01) * 20;
+                if(mP[i3+1] > 1000) mP[i3+1] = -1000;
+                break;
+            case "vortex": // 一颗苹果
+                const c = Math.cos(0.02), s_v = Math.sin(0.02);
+                const vx = mP[i3], vz = mP[i3+2];
+                mP[i3] = vx * c - vz * s_v;
+                mP[i3+2] = vx * s_v + vz * c;
+                break;
+            case "expand": // 爱情的模样
+                const se = 1.2 + Math.sin(time * 0.8) * 0.3;
+                mP[i3] = ox * se + Math.sin(time+i)*10;
+                mP[i3+1] = oy * se + Math.cos(time+i)*10;
+                break;
+            case "jump": // 垃圾车
+                mP[i3+1] = oy + Math.abs(Math.sin(time * 5 + ox/500)) * 60;
+                break;
+        }
+    }
+    mainParticles.geometry.attributes.position.needsUpdate = true;
+    
+    // 在 dash 模式下减慢自转速度，增加稳定感
+    if(mode === "dash") {
+        mainParticles.rotation.y += 0.0002;
+    } else {
+        mainParticles.rotation.y += 0.001;
+    }
+
+    camera.position.z += (targetZoom - camera.position.z) * 0.05;
+    camera.lookAt(0,0,0);
+    renderer.render(scene, camera);
+}
 
         animate();
         window.addEventListener('resize', () => {
