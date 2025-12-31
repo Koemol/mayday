@@ -27,7 +27,8 @@
         }
         #lyrics-text {
             font-size: 1.9rem; font-weight: 300; letter-spacing: 6px; line-height: 1.8;
-            color: var(--accent); text-wrap: balance; 
+            color: var(--accent); text-wrap: balance;  word-break: keep-all; overflow-wrap: break-word;
+}
             text-shadow: 0 0 15px var(--glow), 0 0 30px var(--glow);
             transition: opacity 1.2s, transform 1.5s, filter 1.2s;
         }
@@ -52,7 +53,7 @@
 </head>
 <body>
 
-    <div id="cover" onclick="startApp()">
+    <div id="cover"
         <p>如果五月天懂你</p>
         <span>开启银河旅程</span>
     </div>
