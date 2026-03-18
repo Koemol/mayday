@@ -23,13 +23,14 @@
 
         #lyrics-container {
             position: fixed; top: 44%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; text-align: center; z-index: 100; pointer-events: none;
+            width: 85%; text-align: center; z-index: 100; pointer-events: auto;
         }
         #lyrics-text {
             font-size: 1.9rem; font-weight: 300; letter-spacing: 6px; line-height: 1.8;
             color: var(--accent); text-wrap: balance;  word-break: keep-all; overflow-wrap: break-word;
             text-shadow: 0 0 15px var(--glow), 0 0 30px var(--glow);
             transition: opacity 1.2s, transform 1.5s, filter 1.2s;
+            pointer-events: auto; cursor: pointer;
         }
         .lyric-state-change { opacity: 0 !important; transform: scale(0.9) translateY(20px) !important; filter: blur(25px) brightness(2) !important; }
 
@@ -78,6 +79,9 @@
         let currentSong = "顽固";
         let currentIndices = {};
         Object.keys(config).forEach(k => currentIndices[k] = 0);
+        let lyricTransitioning = false;
+        let lyricTimer = null;
+        const lyricIntervalMs = 5000;
 
         // --- 场景初始化 ---
         const scene = new THREE.Scene();
@@ -139,28 +143,49 @@
 
         // --- 逻辑与交互 ---
         let targetZoom = 1000;
-        window.startApp = () => {
-            document.getElementById('cover').style.opacity = '0';
-            setTimeout(() => { document.getElementById('cover').style.display = 'none'; changeTheme("顽固"); }, 1500);
-        };
+        let targetCameraOffsetX = 0;
+        let targetCameraOffsetY = 0;
+        const interaction = { pulseStrength: 0, pulseX: 0, pulseY: 0 };
 
-        function changeTheme(name, event) {
-            currentSong = name;
-            const data = config[name];
-            document.querySelectorAll('.song-btn').forEach(b => b.classList.remove('active'));
-            if(event) event.currentTarget.classList.add('active');
-            else document.querySelectorAll('.song-btn').forEach(b => { if(b.innerText === name) b.classList.add('active'); });
+        function showNextLyric(song = currentSong) {
+            if (lyricTransitioning) return;
+            lyricTransitioning = true;
 
+            const data = config[song];
             const el = document.getElementById('lyrics-text');
             el.classList.add('lyric-state-change');
             setTimeout(() => {
-                el.innerHTML = data.lyrics[currentIndices[name]];
-                currentIndices[name] = (currentIndices[name] + 1) % data.lyrics.length;
+                el.innerHTML = data.lyrics[currentIndices[song]];
+                currentIndices[song] = (currentIndices[song] + 1) % data.lyrics.length;
                 document.documentElement.style.setProperty('--accent', data.color);
                 document.documentElement.style.setProperty('--glow', data.color + "88");
                 mainMat.color.set(data.color);
                 el.classList.remove('lyric-state-change');
+                lyricTransitioning = false;
             }, 800);
+        }
+
+        function restartLyricTimer() {
+            if (lyricTimer) clearInterval(lyricTimer);
+            lyricTimer = setInterval(() => showNextLyric(currentSong), lyricIntervalMs);
+        }
+
+        window.startApp = () => {
+            document.getElementById('cover').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('cover').style.display = 'none';
+                changeTheme("顽固");
+                restartLyricTimer();
+            }, 1500);
+        };
+
+        function changeTheme(name, event) {
+            currentSong = name;
+            document.querySelectorAll('.song-btn').forEach(b => b.classList.remove('active'));
+            if(event) event.currentTarget.classList.add('active');
+            else document.querySelectorAll('.song-btn').forEach(b => { if(b.innerText === name) b.classList.add('active'); });
+            showNextLyric(name);
+            restartLyricTimer();
         }
 
         const menu = document.getElementById('song-menu');
@@ -169,6 +194,22 @@
             btn.className = 'song-btn'; btn.innerText = name;
             btn.onclick = (e) => changeTheme(name, e);
             menu.appendChild(btn);
+        });
+
+        document.getElementById('lyrics-text').addEventListener('click', () => {
+            showNextLyric(currentSong);
+            restartLyricTimer();
+        });
+
+        window.addEventListener('pointerdown', (e) => {
+            interaction.pulseX = (e.clientX / window.innerWidth - 0.5) * 1600;
+            interaction.pulseY = -(e.clientY / window.innerHeight - 0.5) * 900;
+            interaction.pulseStrength = 220;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            targetCameraOffsetX = (e.clientX / window.innerWidth - 0.5) * 120;
+            targetCameraOffsetY = -(e.clientY / window.innerHeight - 0.5) * 80;
         });
 
 // --- 在 animate 函数中找到对应的 dash 逻辑进行替换 ---
@@ -244,8 +285,18 @@ function animate() {
                 mP[i3+1] = oy + Math.abs(Math.sin(time * 5 + ox/500)) * 60;
                 break;
         }
+
+        if (interaction.pulseStrength > 0.2) {
+            const dx = mP[i3] - interaction.pulseX;
+            const dy = mP[i3+1] - interaction.pulseY;
+            const distSq = dx * dx + dy * dy + 6000;
+            const force = interaction.pulseStrength * 240 / distSq;
+            mP[i3] += dx * force;
+            mP[i3+1] += dy * force;
+        }
     }
     mainParticles.geometry.attributes.position.needsUpdate = true;
+    interaction.pulseStrength *= 0.92;
     
     // 在 dash 模式下减慢自转速度，增加稳定感
     if(mode === "dash") {
@@ -254,6 +305,8 @@ function animate() {
         mainParticles.rotation.y += 0.001;
     }
 
+    camera.position.x += (targetCameraOffsetX - camera.position.x) * 0.03;
+    camera.position.y += (targetCameraOffsetY - camera.position.y) * 0.03;
     camera.position.z += (targetZoom - camera.position.z) * 0.05;
     camera.lookAt(0,0,0);
     renderer.render(scene, camera);
